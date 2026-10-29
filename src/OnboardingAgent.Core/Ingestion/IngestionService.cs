@@ -42,7 +42,25 @@ public sealed partial class IngestionService(KnowledgeIndex index, CorpusOptions
         }
 
         var root = Path.GetFullPath(corpusFolder);
-        var existing = index.GetChecksums(manifest.ProjectId);
+        // Indexed checksums per project, read once per project. The manifest is the only source of the index, so every
+        // project already indexed is read too: a project whose last document left the manifest is cleaned up as well.
+        var existingByProject = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+        Dictionary<string, string> ExistingOf(string projectId)
+        {
+            if (!existingByProject.TryGetValue(projectId, out var checksums))
+            {
+                existingByProject[projectId] = checksums = index.GetChecksums(projectId);
+            }
+
+            return checksums;
+        }
+
+        ExistingOf(manifest.ProjectId);
+        foreach (var indexedProject in index.GetProjectIds())
+        {
+            ExistingOf(indexedProject);
+        }
+
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
         foreach (var entry in manifest.Documents)
@@ -55,6 +73,8 @@ public sealed partial class IngestionService(KnowledgeIndex index, CorpusOptions
             }
 
             seen.Add(entry.DocumentId);
+            var projectId = NullIfEmpty(entry.ProjectId) ?? manifest.ProjectId;
+            var existing = ExistingOf(projectId);
             var fullPath = Path.GetFullPath(Path.Combine(root, entry.Path));
             string text;
             try
@@ -67,7 +87,7 @@ public sealed partial class IngestionService(KnowledgeIndex index, CorpusOptions
                 continue;
             }
 
-            var checksum = Checksum(manifest.ProjectId, entry, text);
+            var checksum = Checksum(projectId, entry, text);
             if (existing.TryGetValue(entry.DocumentId, out var previous) && previous == checksum)
             {
                 skipped.Add(entry.DocumentId);
@@ -84,7 +104,7 @@ public sealed partial class IngestionService(KnowledgeIndex index, CorpusOptions
             index.Upsert(
                 new IndexedDocument(
                     entry.DocumentId,
-                    manifest.ProjectId,
+                    projectId,
                     entry.Title.Trim(),
                     entry.Path.Replace('\\', '/'),
                     entry.SourceType,
@@ -103,7 +123,8 @@ public sealed partial class IngestionService(KnowledgeIndex index, CorpusOptions
 
         // A document that failed validation keeps its previous version; only documents gone from the manifest are removed.
         var failedIds = failed.Select(f => f.DocumentId).OfType<string>().ToHashSet(StringComparer.Ordinal);
-        foreach (var documentId in existing.Keys.Where(id => !seen.Contains(id) && !failedIds.Contains(id)))
+        foreach (var documentId in existingByProject.Values.SelectMany(checksums => checksums.Keys)
+                     .Where(id => !seen.Contains(id) && !failedIds.Contains(id)))
         {
             index.Remove(documentId);
             removed.Add(documentId);
@@ -122,6 +143,11 @@ public sealed partial class IngestionService(KnowledgeIndex index, CorpusOptions
         if (seen.Contains(entry.DocumentId))
         {
             return $"documentId '{entry.DocumentId}' appears more than once in the manifest.";
+        }
+
+        if (!string.IsNullOrWhiteSpace(entry.ProjectId) && !DocumentIdFormat().IsMatch(entry.ProjectId.Trim()))
+        {
+            return $"projectId '{entry.ProjectId}' must be lowercase letters, digits and dashes.";
         }
 
         if (string.IsNullOrWhiteSpace(entry.Title))

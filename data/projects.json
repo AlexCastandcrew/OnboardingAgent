@@ -1,43 +1,93 @@
 {
-  "projects": [
-    {
-      "projectId": "htg",
-      "name": "HTG",
-      "description": "HTGPlus: plataforma de timecards, payroll y onboarding de Cast & Crew.",
-      "repoUrl": "https://github.com/cast-and-crew/htg-server",
-      "snapshotDate": "2026-10-27",
-      "domains": [
-        {
-          "domainId": "rhaegal",
-          "name": "Rhaegal",
-          "depth": "overview",
-          "initiatives": [
-            { "initiativeId": "H2G-6994", "name": "YEP" },
-            { "initiativeId": "H2G-7016", "name": "Onboarding Documents Dashboard Fase 2" },
-            { "initiativeId": "H2G-6371", "name": "Convert Account Code" },
-            { "initiativeId": "H2G-7146", "name": "Run the Business" }
-          ]
-        },
-        {
-          "domainId": "vhagar",
-          "name": "Vhagar",
-          "depth": "overview",
-          "initiatives": [
-            { "initiativeId": "H2G-5928", "name": "Timecard Splits" },
-            { "initiativeId": "H2G-6854", "name": "DGA Scale Rates y Production Feed a Start+" },
-            { "initiativeId": "H2G-7150", "name": "Employee Setup Domain Boundary" }
-          ]
-        },
-        {
-          "domainId": "silverwing",
-          "name": "Silverwing",
-          "depth": "full",
-          "initiatives": [
-            { "initiativeId": "H2G-6627", "name": "Onboarding Documents Fase 1" },
-            { "initiativeId": "H2G-6893", "name": "Excel Import: Executive Officer Payroll" }
-          ]
-        }
-      ]
-    }
-  ]
+    "projects":  [
+                     {
+                         "projectId":  "htg",
+                         "name":  "HTG",
+                         "description":  "HTGPlus: plataforma de timecards, payroll y onboarding de Cast \u0026 Crew.",
+                         "repoUrl":  "https://github.com/cast-and-crew/htg-server",
+                         "snapshotDate":  "2026-10-27",
+                         "domains":  [
+                                         {
+                                             "domainId":  "rhaegal",
+                                             "name":  "Rhaegal",
+                                             "depth":  "overview",
+                                             "initiatives":  [
+                                                                 {
+                                                                     "initiativeId":  "H2G-6994",
+                                                                     "name":  "YEP"
+                                                                 },
+                                                                 {
+                                                                     "initiativeId":  "H2G-7016",
+                                                                     "name":  "Onboarding Documents Dashboard Fase 2",
+                                                                     "nameEn":  "Onboarding Documents Dashboard Phase 2"
+                                                                 },
+                                                                 {
+                                                                     "initiativeId":  "H2G-6371",
+                                                                     "name":  "Convert Account Code"
+                                                                 },
+                                                                 {
+                                                                     "initiativeId":  "H2G-7146",
+                                                                     "name":  "Run the Business"
+                                                                 }
+                                                             ]
+                                         },
+                                         {
+                                             "domainId":  "vhagar",
+                                             "name":  "Vhagar",
+                                             "depth":  "overview",
+                                             "initiatives":  [
+                                                                 {
+                                                                     "initiativeId":  "H2G-5928",
+                                                                     "name":  "Timecard Splits"
+                                                                 },
+                                                                 {
+                                                                     "initiativeId":  "H2G-6854",
+                                                                     "name":  "DGA Scale Rates y Production Feed a Start+",
+                                                                     "nameEn":  "DGA Scale Rates and Production Feed to Start+"
+                                                                 },
+                                                                 {
+                                                                     "initiativeId":  "H2G-7150",
+                                                                     "name":  "Employee Setup Domain Boundary"
+                                                                 }
+                                                             ]
+                                         },
+                                         {
+                                             "domainId":  "silverwing",
+                                             "name":  "Silverwing",
+                                             "depth":  "full",
+                                             "initiatives":  [
+                                                                 {
+                                                                     "initiativeId":  "H2G-6627",
+                                                                     "name":  "Onboarding Documents Fase 1",
+                                                                     "nameEn":  "Onboarding Documents Phase 1"
+                                                                 },
+                                                                 {
+                                                                     "initiativeId":  "H2G-6893",
+                                                                     "name":  "Excel Import: Executive Officer Payroll"
+                                                                 }
+                                                             ]
+                                         }
+                                     ]
+                     },
+                     {
+                         "projectId":  "aicoe",
+                         "name":  "AICOE",
+                         "description":  "Servicio de IA que extrae datos de archivos y documentos a JSON para HTG. Solo overview: el código aún no está disponible.",
+                         "repoUrl":  null,
+                         "snapshotDate":  "2026-10-29",
+                         "domains":  [
+
+                                     ]
+                     },
+                     {
+                         "projectId":  "caps",
+                         "name":  "CAPS",
+                         "description":  "Recibe los timecards que prepara HTG y procesa impuestos, validaciones y lotes. Solo overview: el código aún no está disponible.",
+                         "repoUrl":  null,
+                         "snapshotDate":  "2026-10-29",
+                         "domains":  [
+
+                                     ]
+                     }
+                 ]
 }

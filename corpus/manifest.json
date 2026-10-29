@@ -198,6 +198,113 @@
                           "initiatives":  [
                                               "H2G-6893"
                                           ]
+                      },
+                      {
+                          "documentId":  "aicoe-overview",
+                          "projectId":  "aicoe",
+                          "path":  "aicoe/overview.md",
+                          "title":  "AICOE overview (partial, from HTG documents)",
+                          "sourceType":  "manual",
+                          "sourceUrl":  null,
+                          "sourceVersion":  "snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-29",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "caps-overview",
+                          "projectId":  "caps",
+                          "path":  "caps/overview.md",
+                          "title":  "CAPS overview (partial, from HTG documents)",
+                          "sourceType":  "manual",
+                          "sourceUrl":  null,
+                          "sourceVersion":  "snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-29",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-excelmapping-subscriber-architecture",
+                          "path":  "confluence/confluence-excelmapping-subscriber-architecture.md",
+                          "title":  "HTGPlus.ExcelMapping.Subscriber — Architecture Design",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5385224223",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-07-22",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-excelmapping-subscriber-revised-target",
+                          "path":  "confluence/confluence-excelmapping-subscriber-revised-target.md",
+                          "title":  "HTGPlus.ExcelMapping.Subscriber — Architecture Design (Revised — Target)",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5384536082",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-07-18",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-h2g-5999-batch-size",
+                          "path":  "confluence/confluence-h2g-5999-batch-size.md",
+                          "title":  "H2G-5999 — Why Removing Batch Size Targets the Wrong Problem",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5412388902",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-07-25",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-excelmapping-target-redesign",
+                          "path":  "confluence/confluence-excelmapping-target-redesign.md",
+                          "title":  "HTGPlus.ExcelMapping — Target Redesign (Concern-Separated Pods)",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5412749317",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-09-01",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-excelmapping-redesign-overview",
+                          "path":  "confluence/confluence-excelmapping-redesign-overview.md",
+                          "title":  "ExcelMapping Redesign — Architecture Overview",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5412192268",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-09-01",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
                       }
                   ]
 }

@@ -38,8 +38,15 @@ if (-not $NoBuild) {
 }
 
 $token = Get-DevToken
-Set-Clipboard -Value $token.Token
-Write-Host "Dev token '$($token.Name)' (id $($token.Id), expires $($token.Expires)) is on the clipboard. In Swagger: Authorize, then paste."
+# The clipboard is only a convenience for Swagger. Another program can hold it (Set-Clipboard then throws), and that must
+# not stop the API from starting; the web app (start-web.ps1) gets its own token and does not need the clipboard.
+try {
+    Set-Clipboard -Value $token.Token
+    Write-Host "Dev token '$($token.Name)' (id $($token.Id), expires $($token.Expires)) is on the clipboard. In Swagger: Authorize, then paste."
+}
+catch {
+    Write-Warning "Could not copy the dev token to the clipboard ($($_.Exception.Message)). The API starts anyway. For Swagger, get a token with: dotnet user-jwts create --project src/OnboardingAgent.Api"
+}
 
 $secrets = (& dotnet user-secrets list --project $ApiProject 2>$null) -join "`n"
 foreach ($key in 'Bedrock:AnswerModelId', 'Bedrock:AuxModelId') {
@@ -60,12 +67,21 @@ elseif (-not $hasApiKey -and -not $env:AWS_PROFILE -and -not $env:AWS_ACCESS_KEY
 
 Write-Host "Swagger: http://localhost:$ApiPort/swagger"
 # The decrypted key lives only in this process's environment, which the API inherits, and is removed on exit.
-$previousKey = $env:Bedrock__ApiKey
+# It goes in the AWS SDK's own AWS_BEARER_TOKEN_BEDROCK variable, not in Bedrock__ApiKey: on one machine (2026-10-29) the
+# explicit token provider that Bedrock__ApiKey enables got 403 UnrecognizedClientException with a valid key, while this
+# variable worked. /api/health then reports "auth": "awsCredentials" even though the key is in use.
+$previousKey = $env:AWS_BEARER_TOKEN_BEDROCK
+# The optional Atlassian token (Confluence sync) is passed the same way; without it the API serves the markdown corpus.
+$atlassianToken = Get-AtlassianToken
+$previousAtlassian = $env:Atlassian__ApiToken
 try {
-    if ($apiKey) { $env:Bedrock__ApiKey = $apiKey }
+    if ($apiKey) { $env:AWS_BEARER_TOKEN_BEDROCK = $apiKey.Trim() }
     $apiKey = $null
+    if ($atlassianToken) { $env:Atlassian__ApiToken = $atlassianToken.Trim() }
+    $atlassianToken = $null
     & dotnet run --project $ApiProject --launch-profile http --no-build
 }
 finally {
-    $env:Bedrock__ApiKey = $previousKey
+    $env:AWS_BEARER_TOKEN_BEDROCK = $previousKey
+    $env:Atlassian__ApiToken = $previousAtlassian
 }

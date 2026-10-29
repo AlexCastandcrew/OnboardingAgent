@@ -33,6 +33,9 @@ public sealed class InitiativeEntry
 {
     public string InitiativeId { get; set; } = "";
     public string Name { get; set; } = "";
+
+    /// <summary>English name; the Spanish <see cref="Name"/> is used when this is empty.</summary>
+    public string? NameEn { get; set; }
 }
 
 /// <summary>Projects, their domains (teams) and initiatives (Jira epics), read once from data/projects.json.</summary>
@@ -54,10 +57,12 @@ public sealed class ProjectCatalog
 
     public ProjectEntry? Find(string projectId) => _projects.GetValueOrDefault(projectId);
 
-    public IReadOnlyList<DomainSummary> Domains(ProjectEntry project) =>
+    public IReadOnlyList<DomainSummary> Domains(ProjectEntry project, string? language = null) =>
         project.Domains
             .Select(d => new DomainSummary(d.DomainId, d.Name, d.Depth,
-                d.Initiatives.Select(i => new InitiativeSummary(i.InitiativeId, i.Name)).ToList()))
+                d.Initiatives.Select(i => new InitiativeSummary(
+                    i.InitiativeId,
+                    language == Languages.English && !string.IsNullOrWhiteSpace(i.NameEn) ? i.NameEn : i.Name)).ToList()))
             .ToList();
 
     /// <summary>

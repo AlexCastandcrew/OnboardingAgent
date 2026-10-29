@@ -1,0 +1,193 @@
+{
+    "_comment":  "Confluence pages synced by \u0027sync-confluence\u0027 (POST /api/admin/sync-confluence). Each page is read through the Atlassian Rovo MCP server, sanitized and written to \u0027path\u0027 under corpus/. documentId, projectId, domains, initiatives and title mirror the manifest entry for that file; the sync only needs pageId and path. Add a page here AND in the manifest.",
+    "pages":  [
+                  {
+                      "pageId":  "5385224223",
+                      "documentId":  "confluence-excelmapping-subscriber-architecture",
+                      "path":  "confluence/confluence-excelmapping-subscriber-architecture.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6893"
+                                      ],
+                      "title":  "HTGPlus.ExcelMapping.Subscriber — Architecture Design"
+                  },
+                  {
+                      "pageId":  "5384536082",
+                      "documentId":  "confluence-excelmapping-subscriber-revised-target",
+                      "path":  "confluence/confluence-excelmapping-subscriber-revised-target.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6893"
+                                      ],
+                      "title":  "HTGPlus.ExcelMapping.Subscriber — Architecture Design (Revised — Target)"
+                  },
+                  {
+                      "pageId":  "5412388902",
+                      "documentId":  "confluence-h2g-5999-batch-size",
+                      "path":  "confluence/confluence-h2g-5999-batch-size.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6893"
+                                      ],
+                      "title":  "H2G-5999 — Why Removing Batch Size Targets the Wrong Problem"
+                  },
+                  {
+                      "pageId":  "5412749317",
+                      "documentId":  "confluence-excelmapping-target-redesign",
+                      "path":  "confluence/confluence-excelmapping-target-redesign.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6893"
+                                      ],
+                      "title":  "HTGPlus.ExcelMapping — Target Redesign (Concern-Separated Pods)"
+                  },
+                  {
+                      "pageId":  "5412192268",
+                      "documentId":  "confluence-excelmapping-redesign-overview",
+                      "path":  "confluence/confluence-excelmapping-redesign-overview.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6893"
+                                      ],
+                      "title":  "ExcelMapping Redesign — Architecture Overview"
+                  },
+                  {
+                      "pageId":  "5422841860",
+                      "documentId":  "confluence-onboarding-import-technical-design",
+                      "path":  "confluence/confluence-onboarding-import-technical-design.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627"
+                                      ],
+                      "title":  "Onboarding Import Service - Technical Design"
+                  },
+                  {
+                      "pageId":  "5523996673",
+                      "documentId":  "confluence-onboarding-import-remaining-work",
+                      "path":  "confluence/confluence-onboarding-import-remaining-work.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627"
+                                      ],
+                      "title":  "Onboarding Import — Remaining Work \u0026 Dependencies"
+                  },
+                  {
+                      "pageId":  "5625872388",
+                      "documentId":  "confluence-h2g-6950-payroll-contract",
+                      "path":  "confluence/confluence-h2g-6950-payroll-contract.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627"
+                                      ],
+                      "title":  "H2G-6950 — Payroll Contract Negotiation Proposal (Onboarding Bundle) — draft"
+                  },
+                  {
+                      "pageId":  "5637111813",
+                      "documentId":  "confluence-onboarding-file-tracking-ai-data",
+                      "path":  "confluence/confluence-onboarding-file-tracking-ai-data.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627"
+                                      ],
+                      "title":  "Onboarding Import - File Tracking and AI Data Visibility"
+                  },
+                  {
+                      "pageId":  "5558992937",
+                      "documentId":  "confluence-externaldatamapper-technical-design",
+                      "path":  "confluence/confluence-externaldatamapper-technical-design.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627"
+                                      ],
+                      "title":  "Onboarding Mapping Service (HTGPlus.ExternalDataMapper) — Technical Design"
+                  },
+                  {
+                      "pageId":  "5639012521",
+                      "documentId":  "confluence-onboarding-ticket-inventory",
+                      "path":  "confluence/confluence-onboarding-ticket-inventory.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing",
+                                      "rhaegal"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627",
+                                          "H2G-7016"
+                                      ],
+                      "title":  "Onboarding Import and External Data Mapper — Ticket Inventory"
+                  },
+                  {
+                      "pageId":  "5654708292",
+                      "documentId":  "confluence-onboarding-package-linkage",
+                      "path":  "confluence/confluence-onboarding-package-linkage.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing",
+                                      "rhaegal"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627",
+                                          "H2G-7016"
+                                      ],
+                      "title":  "Onboarding Import — Package Linkage, Counts and Retry Design"
+                  },
+                  {
+                      "pageId":  "5683740738",
+                      "documentId":  "confluence-onboarding-package-set-tables",
+                      "path":  "confluence/confluence-onboarding-package-set-tables.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing",
+                                      "rhaegal"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627",
+                                          "H2G-7016"
+                                      ],
+                      "title":  "Onboarding Import — Package Set and Document Tables: Design and Ticket Inventory"
+                  },
+                  {
+                      "pageId":  "5562728458",
+                      "documentId":  "confluence-externaldatamapper-page",
+                      "path":  "confluence/confluence-externaldatamapper-page.md",
+                      "projectId":  "htg",
+                      "domains":  [
+                                      "silverwing"
+                                  ],
+                      "initiatives":  [
+                                          "H2G-6627"
+                                      ],
+                      "title":  "HTGPlus.ExternalDataMapper"
+                  }
+              ]
+}

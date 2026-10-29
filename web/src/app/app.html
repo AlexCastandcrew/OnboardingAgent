@@ -1,0 +1,38 @@
+<header class="navbar">
+  <div class="brand" role="img" aria-label="Moltres Agent, powered by Cast &amp; Crew">
+    <span class="brand-name">Moltres Agent</span>
+    <svg class="brand-cross" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="9" y="1" width="6" height="22" />
+      <rect x="1" y="9" width="22" height="6" />
+    </svg>
+    <span class="brand-powered">Powered by <strong>Cast &amp; Crew</strong></span>
+  </div>
+  <div class="title">
+    <strong>AI Team Onboarding</strong>
+    <span class="muted">{{ i18n.t('app.subtitle') }}</span>
+  </div>
+  <div class="language" role="group" [attr.aria-label]="i18n.t('lang.label')">
+    @for (option of languages; track option.id) {
+      <button
+        type="button"
+        class="lang-button"
+        [class.active]="i18n.language() === option.id"
+        [attr.aria-pressed]="i18n.language() === option.id"
+        (click)="store.setLanguage(option.id)">{{ option.label }}</button>
+    }
+  </div>
+</header>
+
+@if (store.healthWarning()) {
+  <p class="error" role="alert">{{ i18n.t('app.healthWarning') }}</p>
+}
+
+<main class="layout">
+  <div class="left">
+    <app-selection />
+    <app-route />
+  </div>
+  <app-chat />
+</main>
+
+<app-evidence />

@@ -30,6 +30,54 @@ public class OnboardingAndCatalogTests
     }
 
     [Fact]
+    public void Build_EnglishRequested_UsesEnglishTextsAndFallsBackToSpanishPerField()
+    {
+        using var corpus = new TestCorpus().Add("teams", "# Teams\n\nText.");
+        corpus.Ingest();
+        var translated = Step(1, "Resumen", "teams");
+        translated.Goal = "Meta";
+        translated.SuggestedQuestions = ["¿Qué es esto?"];
+        translated.En = new StepTexts { Title = "Overview", SuggestedQuestions = ["What is this?"] };
+        var file = new OnboardingFile { Routes = [Route("*", null, null, translated, Step(2, "Accesos", "teams"))] };
+        var service = new OnboardingService(file, corpus.Index);
+
+        var english = service.Build("htg", "qa", null, null, "en");
+        var spanish = service.Build("htg", "qa", null, null, null);
+
+        Assert.Equal(("Overview", "Meta", "What is this?"), (english.Steps[0].Title, english.Steps[0].Goal, english.Steps[0].SuggestedQuestions[0]));
+        Assert.Equal("Accesos", english.Steps[1].Title);
+        Assert.Equal(("Resumen", "¿Qué es esto?"), (spanish.Steps[0].Title, spanish.Steps[0].SuggestedQuestions[0]));
+    }
+
+    [Fact]
+    public void Domains_EnglishRequested_UsesTheEnglishInitiativeNameWhenThereIsOne()
+    {
+        var project = new ProjectEntry
+        {
+            ProjectId = "htg",
+            Domains =
+            [
+                new DomainEntry
+                {
+                    DomainId = "silverwing",
+                    Initiatives =
+                    [
+                        new InitiativeEntry { InitiativeId = "H2G-6627", Name = "Fase 1", NameEn = "Phase 1" },
+                        new InitiativeEntry { InitiativeId = "H2G-6893", Name = "Excel Import" }
+                    ]
+                }
+            ]
+        };
+        var catalog = new ProjectCatalog(new CatalogFile { Projects = [project] });
+
+        var english = catalog.Domains(project, "en").Single().Initiatives.Select(i => i.Name);
+        var spanish = catalog.Domains(project, "es").Single().Initiatives.Select(i => i.Name);
+
+        Assert.Equal(["Phase 1", "Excel Import"], english);
+        Assert.Equal(["Fase 1", "Excel Import"], spanish);
+    }
+
+    [Fact]
     public void Validate_InitiativeFromAnotherDomain_IsRejected()
     {
         var catalog = new ProjectCatalog(new CatalogFile

@@ -55,6 +55,47 @@ public class IngestionTests
     }
 
     [Fact]
+    public void Ingest_DocumentNamingItsOwnProject_IsFoundOnlyInThatProject()
+    {
+        using var corpus = new TestCorpus()
+            .Add("teams", "# Teams\n\nSilverwing works on Excel Import.")
+            .Add("caps-overview", "# CAPS\n\nCAPS calculates taxes for timecards.", projectId: "caps");
+
+        corpus.Ingest();
+        var retriever = new Retriever(corpus.Index, new ChatOptions());
+
+        Assert.Single(retriever.Search(new RetrievalScope("caps", null, null), ["taxes"]));
+        Assert.Empty(retriever.Search(new RetrievalScope("htg", null, null), ["taxes"]));
+        Assert.Single(retriever.Search(new RetrievalScope("htg", null, null), ["Silverwing"]));
+    }
+
+    [Fact]
+    public void Ingest_DocumentOfAnotherProjectLeftTheManifest_RemovesItAndKeepsTheRest()
+    {
+        using var corpus = new TestCorpus()
+            .Add("teams", "# Teams\n\nSilverwing works on Excel Import.")
+            .Add("caps-overview", "# CAPS\n\nCAPS calculates taxes.", projectId: "caps");
+        corpus.Ingest();
+
+        var result = corpus.Drop("caps-overview").Ingest();
+
+        Assert.Equal(["caps-overview"], result.Removed);
+        Assert.Null(corpus.Index.GetDocument("caps-overview"));
+        Assert.NotNull(corpus.Index.GetDocument("teams"));
+    }
+
+    [Fact]
+    public void Ingest_InvalidProjectIdOnADocument_FailsWithoutIndexing()
+    {
+        using var corpus = new TestCorpus().Add("bad", "# Bad\n\nText.", projectId: "Not Valid");
+
+        var result = corpus.Ingest();
+
+        Assert.Empty(result.Processed);
+        Assert.Contains(result.Failed, f => f.DocumentId == "bad" && f.Reason.Contains("projectId"));
+    }
+
+    [Fact]
     public void Ingest_ExcludedOrEscapingPath_FailsWithoutIndexing()
     {
         using var corpus = new TestCorpus()

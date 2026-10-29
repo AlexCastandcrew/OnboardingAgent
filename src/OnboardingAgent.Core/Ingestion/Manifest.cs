@@ -10,6 +10,9 @@ public sealed class ManifestDocument
 {
     public string DocumentId { get; set; } = "";
 
+    /// <summary>Project this document belongs to. Empty means the manifest's own projectId.</summary>
+    public string? ProjectId { get; set; }
+
     /// <summary>Path relative to the corpus folder.</summary>
     public string Path { get; set; } = "";
 

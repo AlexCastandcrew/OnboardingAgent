@@ -5,6 +5,7 @@ using OnboardingAgent.Core.Contracts;
 using OnboardingAgent.Core.Ingestion;
 using OnboardingAgent.Core.Options;
 using OnboardingAgent.Core.Retrieval;
+using OnboardingAgent.Core.Sync;
 
 namespace OnboardingAgent.Core;
 
@@ -22,6 +23,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton(new KnowledgeIndex(Path.Combine(paths.StateFolder, "index.db")));
         services.AddSingleton<IngestionService>();
+        services.AddSingleton<ConfluenceSyncService>();
+        services.AddSingleton<ConfluenceSyncRunner>();
         services.AddSingleton<Retriever>();
         services.AddSingleton(ProjectCatalog.Load(Path.Combine(paths.DataFolder, "projects.json")));
         services.AddSingleton(OnboardingService.Load(Path.Combine(paths.DataFolder, "onboarding.json")));

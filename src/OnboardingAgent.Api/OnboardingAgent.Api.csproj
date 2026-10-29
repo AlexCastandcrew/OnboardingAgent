@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OnboardingAgent.Core\OnboardingAgent.Core.csproj" />
+    <ProjectReference Include="..\OnboardingAgent.ExternalApi.Atlassian\OnboardingAgent.ExternalApi.Atlassian.csproj" />
     <ProjectReference Include="..\OnboardingAgent.ExternalApi.Bedrock\OnboardingAgent.ExternalApi.Bedrock.csproj" />
   </ItemGroup>
 

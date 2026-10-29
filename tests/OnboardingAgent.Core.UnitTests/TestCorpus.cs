@@ -25,7 +25,7 @@ internal sealed class TestCorpus : IDisposable
     public CorpusOptions Options { get; }
     public IngestionService Ingestion { get; }
 
-    public TestCorpus Add(string documentId, string markdown, string[]? domains = null, string[]? initiatives = null, string? path = null)
+    public TestCorpus Add(string documentId, string markdown, string[]? domains = null, string[]? initiatives = null, string? path = null, string? projectId = null)
     {
         path ??= documentId + ".md";
         File.WriteAllText(Path.Combine(Folder, path), markdown);
@@ -33,6 +33,7 @@ internal sealed class TestCorpus : IDisposable
         _documents.Add(new ManifestDocument
         {
             DocumentId = documentId,
+            ProjectId = projectId,
             Path = path,
             Title = documentId,
             SourceType = "synthetic",

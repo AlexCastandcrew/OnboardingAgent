@@ -31,6 +31,16 @@ public sealed class StepEntry
     public List<string> DocumentIds { get; set; } = [];
     public List<OnboardingLink> Links { get; set; } = [];
     public List<string> SuggestedQuestions { get; set; } = [];
+
+    /// <summary>English texts. Each field that is empty falls back to the Spanish one above.</summary>
+    public StepTexts? En { get; set; }
+}
+
+public sealed class StepTexts
+{
+    public string? Title { get; set; }
+    public string? Goal { get; set; }
+    public List<string>? SuggestedQuestions { get; set; }
 }
 
 /// <summary>
@@ -46,8 +56,9 @@ public sealed class OnboardingService(OnboardingFile file, KnowledgeIndex index)
         JsonSerializer.Deserialize<OnboardingFile>(File.ReadAllText(path), new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
         ?? throw new InvalidOperationException($"'{path}' is empty.");
 
-    public OnboardingRoute Build(string projectId, string role, string? domain, string? initiative)
+    public OnboardingRoute Build(string projectId, string role, string? domain, string? initiative, string? language = null)
     {
+        var english = language == Languages.English;
         var matching = file.Routes
             .Where(r => r.ProjectId.Equals(projectId, StringComparison.OrdinalIgnoreCase)
                         && (r.Role == "*" || r.Role.Equals(role, StringComparison.OrdinalIgnoreCase))
@@ -72,16 +83,17 @@ public sealed class OnboardingService(OnboardingFile file, KnowledgeIndex index)
                 .Select(id => documents[id])
                 .Select(d => new OnboardingDocument(d.DocumentId, d.Title, d.SourceType, d.SourceUrl))
                 .ToList();
+            var texts = english ? step.En : null;
             steps.Add(new OnboardingStep(
                 number,
                 step.Key,
-                step.Title,
-                step.Goal,
+                string.IsNullOrWhiteSpace(texts?.Title) ? step.Title : texts.Title,
+                string.IsNullOrWhiteSpace(texts?.Goal) ? step.Goal : texts.Goal,
                 found.Count > 0 ? "ready" : "pending",
                 found.Select(d => d.DocumentId).ToList(),
                 found,
                 step.Links,
-                step.SuggestedQuestions));
+                texts?.SuggestedQuestions is { Count: > 0 } questions ? questions : step.SuggestedQuestions));
         }
 
         return new OnboardingRoute(projectId, role, domain, initiative, steps);

@@ -88,6 +88,20 @@ public class ApiTests
     }
 
     [Fact]
+    public async Task Chat_UnsupportedLanguage_Returns400OnTheLanguageField()
+    {
+        using var factory = new ApiFactory();
+        using var client = factory.ClientFor("ana");
+
+        using var response = await client.PostAsJsonAsync("/api/chat",
+            new { projectId = "htg", role = "developer", message = "What is HTG?", language = "fr" });
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.True(body.RootElement.GetProperty("errors").TryGetProperty("language", out _));
+    }
+
+    [Fact]
     public async Task Chat_OverTheLimit_Returns429ForThatUserOnly()
     {
         using var factory = new ApiFactory(chatPermitLimit: 2);

@@ -7,13 +7,18 @@ using OnboardingAgent.Api.Startup;
 using OnboardingAgent.Core;
 using OnboardingAgent.Core.Ingestion;
 using OnboardingAgent.Core.Options;
+using OnboardingAgent.Core.Sync;
+using OnboardingAgent.ExternalApi.Atlassian;
 using OnboardingAgent.ExternalApi.Bedrock;
 
 // `dotnet run -- ingest [--corpus <folder>] [--manifest <file>]` runs the ingestion and exits.
+// `dotnet run -- sync-confluence` copies the Confluence pages through MCP, then ingests and exits.
+var syncOnly = args.Length > 0 && args[0] == "sync-confluence";
 var ingestOnly = args.Length > 0 && args[0] == "ingest";
-var builder = WebApplication.CreateBuilder(ingestOnly ? args[1..] : args);
+var builder = WebApplication.CreateBuilder(ingestOnly || syncOnly ? args[1..] : args);
 
 var bedrock = builder.Configuration.GetSection(BedrockOptions.Section).Get<BedrockOptions>() ?? new();
+var atlassian = builder.Configuration.GetSection(AtlassianOptions.Section).Get<AtlassianOptions>() ?? new();
 var corpus = builder.Configuration.GetSection(CorpusOptions.Section).Get<CorpusOptions>() ?? new();
 var chat = builder.Configuration.GetSection(ChatOptions.Section).Get<ChatOptions>() ?? new();
 var chatRateLimit = builder.Configuration.GetSection(ChatRateLimitOptions.Section).Get<ChatRateLimitOptions>() ?? new();
@@ -24,9 +29,10 @@ var problems = corpus.Validate()
     .Concat(paths.Validate())
     .Concat(chat.Validate())
     .Concat(bedrock.Validate())
+    .Concat(atlassian.Validate())
     .Concat(chatRateLimit.Validate())
     // The ingest command never serves requests, so it needs no bearer settings.
-    .Concat(ingestOnly ? [] : BearerConfiguration.Validate(builder.Configuration))
+    .Concat(ingestOnly || syncOnly ? [] : BearerConfiguration.Validate(builder.Configuration))
     .ToList();
 if (problems.Count > 0)
 {
@@ -41,6 +47,7 @@ if (problems.Count > 0)
 
 builder.Services.AddOnboardingCore(corpus, chat, paths);
 builder.Services.AddBedrockClaude(bedrock);
+builder.Services.AddAtlassianConfluence(atlassian);
 
 builder.Services.ConfigureHttpJsonOptions(o =>
     o.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
@@ -73,6 +80,14 @@ var app = builder.Build();
 foreach (var warning in bedrock.Warnings())
 {
     app.Logger.LogWarning("[Startup] {Warning}", warning);
+}
+
+if (syncOnly)
+{
+    var report = await app.Services.GetRequiredService<ConfluenceSyncRunner>().RunAsync(CancellationToken.None);
+    Console.WriteLine(JsonSerializer.Serialize(report, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true }));
+    // The corpus is still served when pages fail, but the exit code says the sync was not clean.
+    return report.Sync.Reason is null && report.Sync.Failed.Count == 0 && report.Ingestion?.Failed.Count is null or 0 ? 0 : 1;
 }
 
 if (ingestOnly)

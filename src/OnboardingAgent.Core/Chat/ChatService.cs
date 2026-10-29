@@ -18,7 +18,8 @@ public sealed record ChatTurn(
     string? Domain,
     string? Initiative,
     string Message,
-    IReadOnlyList<ClaudeMessage> History);
+    IReadOnlyList<ClaudeMessage> History,
+    string? Language = null);
 
 /// <summary>
 /// Question + short history → query rewrite (Haiku) → BM25 → rerank (Haiku) → 4–6 passages →
@@ -202,7 +203,7 @@ public sealed class ChatService(
             var messages = MergeTurns(turn.History.Append(new ClaudeMessage("user", text)));
 
             var result = await claude.InvokeStructuredAsync(
-                new ClaudeStructuredCall(ModelTier.Answer, Prompts.AnswerSystem(turn.Project.Name), messages,
+                new ClaudeStructuredCall(ModelTier.Answer, Prompts.AnswerSystem(turn.Project.Name, turn.Language), messages,
                     Prompts.AnswerSchemaName, "Submit the answer, its evidence status and its claims with source ids.", Prompts.AnswerSchema),
                 cancellationToken);
 

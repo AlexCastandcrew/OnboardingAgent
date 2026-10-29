@@ -330,6 +330,132 @@
                           "initiatives":  [
                                               "H2G-6627"
                                           ]
+                      },
+                      {
+                          "documentId":  "confluence-onboarding-import-technical-design",
+                          "path":  "confluence/confluence-onboarding-import-technical-design.md",
+                          "title":  "Onboarding Import Service - Technical Design",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5422841860",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-09",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-onboarding-import-remaining-work",
+                          "path":  "confluence/confluence-onboarding-import-remaining-work.md",
+                          "title":  "Onboarding Import — Remaining Work \u0026 Dependencies",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5523996673",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-09-04",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-h2g-6950-payroll-contract",
+                          "path":  "confluence/confluence-h2g-6950-payroll-contract.md",
+                          "title":  "H2G-6950 — Payroll Contract Negotiation Proposal (Onboarding Bundle) — draft",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5625872388",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-01",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-onboarding-file-tracking-ai-data",
+                          "path":  "confluence/confluence-onboarding-file-tracking-ai-data.md",
+                          "title":  "Onboarding Import - File Tracking and AI Data Visibility",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5637111813",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-22",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-externaldatamapper-technical-design",
+                          "path":  "confluence/confluence-externaldatamapper-technical-design.md",
+                          "title":  "Onboarding Mapping Service (HTGPlus.ExternalDataMapper) — Technical Design",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5558992937",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-21",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-onboarding-ticket-inventory",
+                          "path":  "confluence/confluence-onboarding-ticket-inventory.md",
+                          "title":  "Onboarding Import and External Data Mapper — Ticket Inventory",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5639012521",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-09",
+                          "domains":  [
+                                          "silverwing",
+                                          "rhaegal"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627",
+                                              "H2G-7016"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-onboarding-package-linkage",
+                          "path":  "confluence/confluence-onboarding-package-linkage.md",
+                          "title":  "Onboarding Import — Package Linkage, Counts and Retry Design",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5654708292",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-21",
+                          "domains":  [
+                                          "silverwing",
+                                          "rhaegal"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627",
+                                              "H2G-7016"
+                                          ]
+                      },
+                      {
+                          "documentId":  "confluence-onboarding-package-set-tables",
+                          "path":  "confluence/confluence-onboarding-package-set-tables.md",
+                          "title":  "Onboarding Import — Package Set and Document Tables: Design and Ticket Inventory",
+                          "sourceType":  "confluence",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/wiki/spaces/HPS/pages/5683740738",
+                          "sourceVersion":  "confluence-snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-27",
+                          "domains":  [
+                                          "silverwing",
+                                          "rhaegal"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627",
+                                              "H2G-7016"
+                                          ]
                       }
                   ]
 }

@@ -5,8 +5,13 @@ Based on section 13 of `PLAN 1.md`. **Not rehearsed, not recorded.** Questions b
 and its sources before using it on stage. Run everything live; a saved answer is a backup and must be labeled as one.
 
 Before starting: `powershell -ExecutionPolicy Bypass -File scripts/start.ps1` (needs the saved Bedrock key), check
-`http://localhost:5006/api/health` shows `ok`, `configured: true`. No frontend exists in this repository, so use Swagger
-(`/swagger`, Authorize with the token on the clipboard) unless the Angular app is available.
+`http://localhost:5006/api/health` shows `ok`, `configured: true`. Then start the Angular app with
+`powershell -ExecutionPolicy Bypass -File scripts/start-web.ps1` and open http://localhost:4200 (see `web/README.md`). The
+app was checked in mock mode only; it has not been run against the real API yet. Swagger (`/swagger`, Authorize with the
+token on the clipboard) stays as the fallback.
+
+The app has an ES / EN switch in the top bar: the page, the route and the answers follow it. Show it once (for example, ask
+in Spanish, switch to EN, ask again). The evaluation cases were run in Spanish only; the English answers have not been reviewed.
 
 | Time | What to show | Question or action | Case that backed it |
 |---|---|---|---|

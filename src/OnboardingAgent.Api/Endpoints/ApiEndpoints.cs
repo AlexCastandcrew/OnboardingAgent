@@ -8,6 +8,7 @@ using OnboardingAgent.Core.Ingestion;
 using OnboardingAgent.Core.Llm;
 using OnboardingAgent.Core.Options;
 using OnboardingAgent.Core.Retrieval;
+using OnboardingAgent.Core.Sync;
 
 namespace OnboardingAgent.Api.Endpoints;
 
@@ -67,6 +68,21 @@ public static class ApiEndpoints
             .WithTags("Admin")
             .WithSummary("Re-runs the ingestion of the corpus folder. Only from the local machine.")
             .ProducesProblem(StatusCodes.Status403Forbidden);
+
+        api.MapPost("/admin/sync-confluence", SyncConfluence)
+            .WithTags("Admin")
+            .WithSummary("Copies the listed Confluence pages into the corpus through MCP, then ingests. Only from the local machine.")
+            .ProducesProblem(StatusCodes.Status403Forbidden);
+    }
+
+    private static async Task<Results<Ok<ConfluenceSyncReport>, ProblemHttpResult>> SyncConfluence(HttpContext http, ConfluenceSyncRunner runner, CancellationToken ct)
+    {
+        if (http.Connection.RemoteIpAddress is { } ip && !IPAddress.IsLoopback(ip))
+        {
+            return TypedResults.Problem("The Confluence sync is only allowed from the local machine.", statusCode: StatusCodes.Status403Forbidden);
+        }
+
+        return TypedResults.Ok(await runner.RunAsync(ct));
     }
 
     private static HealthResponse Health(KnowledgeIndex index, IClaudeClient claude)
@@ -79,22 +95,31 @@ public static class ApiEndpoints
             new ModelHealth(models.Region, models.AnswerModelId, models.AuxModelId, models.Auth, models.Configured));
     }
 
-    private static Results<Ok<IReadOnlyList<DomainSummary>>, ProblemHttpResult> Domains(string projectId, ProjectCatalog catalog)
+    private static Results<Ok<IReadOnlyList<DomainSummary>>, ProblemHttpResult> Domains(string projectId, string? language, ProjectCatalog catalog)
     {
         var project = catalog.Find(projectId);
         return project is null
             ? TypedResults.Problem($"Unknown project '{projectId}'.", statusCode: StatusCodes.Status404NotFound)
-            : TypedResults.Ok(catalog.Domains(project));
+            : TypedResults.Ok(catalog.Domains(project, Languages.Normalize(language)));
     }
 
     private static Results<Ok<OnboardingRoute>, ValidationProblem> Onboarding(
-        string projectId, string role, string? domain, string? initiative, ProjectCatalog catalog, OnboardingService onboarding)
+        string projectId, string role, string? domain, string? initiative, string? language, ProjectCatalog catalog, OnboardingService onboarding)
     {
         var scope = catalog.Validate(projectId, role.ToLowerInvariant(), domain, initiative);
-        return scope.IsValid
-            ? TypedResults.Ok(onboarding.Build(scope.Project!.ProjectId, role.ToLowerInvariant(), scope.Domain, scope.Initiative))
-            : TypedResults.ValidationProblem(scope.Errors);
+        var errors = new Dictionary<string, string[]>(scope.Errors);
+        var lang = Languages.Normalize(language);
+        if (lang is not null && !Languages.All.Contains(lang))
+        {
+            errors["language"] = [LanguageError];
+        }
+
+        return errors.Count == 0
+            ? TypedResults.Ok(onboarding.Build(scope.Project!.ProjectId, role.ToLowerInvariant(), scope.Domain, scope.Initiative, lang))
+            : TypedResults.ValidationProblem(errors);
     }
+
+    private static readonly string LanguageError = $"Language must be one of: {string.Join(", ", Languages.All)}.";
 
     private static async Task<Results<Ok<ChatResponse>, ValidationProblem, ProblemHttpResult>> Chat(
         ChatRequest request, ProjectCatalog catalog, ChatService chat, ChatOptions options, HttpContext http, ILoggerFactory loggers)
@@ -102,6 +127,12 @@ public static class ApiEndpoints
         var role = request.Role?.ToLowerInvariant();
         var scope = catalog.Validate(request.ProjectId, role, request.Domain, request.Initiative);
         var errors = new Dictionary<string, string[]>(scope.Errors);
+
+        var language = Languages.Normalize(request.Language);
+        if (language is not null && !Languages.All.Contains(language))
+        {
+            errors["language"] = [LanguageError];
+        }
 
         var message = request.Message?.Trim() ?? "";
         if (message.Length == 0)
@@ -132,7 +163,7 @@ public static class ApiEndpoints
         try
         {
             return TypedResults.Ok(await chat.AskAsync(
-                new ChatTurn(scope.Project!, role!, scope.Domain, scope.Initiative, message, history), timeout.Token));
+                new ChatTurn(scope.Project!, role!, scope.Domain, scope.Initiative, message, history, language), timeout.Token));
         }
         catch (LlmException ex)
         {

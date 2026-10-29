@@ -11,6 +11,18 @@ public static class Roles
     public static readonly IReadOnlySet<string> All = new HashSet<string> { Developer, Qa, Leader };
 }
 
+public static class Languages
+{
+    public const string Spanish = "es";
+    public const string English = "en";
+
+    public static readonly IReadOnlySet<string> All = new HashSet<string> { Spanish, English };
+
+    /// <summary>Lowercase and trimmed, or null when empty.</summary>
+    public static string? Normalize(string? language) =>
+        string.IsNullOrWhiteSpace(language) ? null : language.Trim().ToLowerInvariant();
+}
+
 public enum EvidenceStatus
 {
     Supported,
@@ -43,6 +55,10 @@ public sealed record ChatRequest
     /// <summary>developer, qa or leader.</summary>
     /// <example>developer</example>
     [Required] public required string Role { get; init; }
+
+    /// <summary>Language of the answer: "es" or "en". Optional; when omitted the answer follows the question's language.</summary>
+    /// <example>es</example>
+    public string? Language { get; init; }
 
     /// <example>¿Qué hace el import de Excel de Executive Officer Payroll?</example>
     [Required] public required string Message { get; init; }

@@ -33,6 +33,21 @@ public class ChatServiceTests
         Assert.Contains("S7", claude.AnswerPrompts[1]);
     }
 
+    [Theory]
+    [InlineData("en", "Write the answer in English")]
+    [InlineData("es", "Write the answer in Spanish")]
+    [InlineData(null, "language of the user's latest question")]
+    public async Task AskAsync_LanguageChosen_AnswerPromptFixesThatLanguage(string? language, string expected)
+    {
+        using var corpus = new TestCorpus().Add("setup", "# Setup\n\nRun dotnet run.");
+        corpus.Ingest();
+        var claude = new ScriptedClaude(rerank: ["C1"], Answer("Run it [S1].", "supported", "S1"));
+
+        await NewService(corpus, claude).AskAsync(Turn("How do I run it with dotnet?", language), CancellationToken.None);
+
+        Assert.Contains(expected, Assert.Single(claude.AnswerSystems));
+    }
+
     [Fact]
     public async Task AskAsync_InvalidCitationsTwice_ThrowsInsteadOfAnswering()
     {
@@ -92,7 +107,7 @@ public class ChatServiceTests
             gaps ?? new JsonlStore<KnowledgeGap>(Path.Combine(corpus.Folder, "gaps.jsonl")),
             TimeProvider.System, NullLogger<ChatService>.Instance);
 
-    private static ChatTurn Turn(string message) => new(Htg, Roles.Developer, null, null, message, []);
+    private static ChatTurn Turn(string message, string? language = null) => new(Htg, Roles.Developer, null, null, message, [], language);
 
     private static string Answer(string text, string status, params string[] sourceIds) =>
         JsonSerializer.Serialize(new
@@ -111,6 +126,7 @@ public class ChatServiceTests
 
         public bool FailRewrite { get; init; }
         public List<string> AnswerPrompts { get; } = [];
+        public List<string> AnswerSystems { get; } = [];
 
         public Task<JsonElement> InvokeStructuredAsync(ClaudeStructuredCall call, CancellationToken cancellationToken)
         {
@@ -127,6 +143,7 @@ public class ChatServiceTests
         private string Record(ClaudeStructuredCall call)
         {
             AnswerPrompts.Add(call.Messages[^1].Text);
+            AnswerSystems.Add(call.System);
             return answers[_answer++];
         }
     }

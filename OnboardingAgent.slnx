@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/OnboardingAgent.Api/OnboardingAgent.Api.csproj" />
     <Project Path="src/OnboardingAgent.Core/OnboardingAgent.Core.csproj" />
+    <Project Path="src/OnboardingAgent.ExternalApi.Atlassian/OnboardingAgent.ExternalApi.Atlassian.csproj" />
     <Project Path="src/OnboardingAgent.ExternalApi.Bedrock/OnboardingAgent.ExternalApi.Bedrock.csproj" />
   </Folder>
   <Folder Name="/tools/">

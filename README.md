@@ -4,8 +4,8 @@
 the project corpus. Answers come from Claude on AWS Bedrock and cite their sources.
 
 **Scope and limits.** Backend only. It serves the onboarding routes and a RAG chat over a small corpus (13 approved documents today, all about ExcelMapping/Excel Import plus team overview).
-It is a hackathon demo, not a production service: no embeddings, no streaming, no per-document permissions, and no
-frontend in this repository (no Angular project was found next to it, so the frontend integration is **not verified**).
+It is a hackathon demo, not a production service: no embeddings, no streaming and no per-document permissions. The Angular
+frontend in `web/` is verified in mock mode only; its integration with this API is **not verified**.
 Answers are not reviewed by a human by default; see [eval/EVIDENCE.md](eval/EVIDENCE.md) for what was and was not checked.
 
 Repo root: `C:\Users\arendon\Documents\Hackathon\Backend\OnboardingAgent`. It is not a Git repository.
@@ -16,6 +16,56 @@ Repo root: `C:\Users\arendon\Documents\Hackathon\Backend\OnboardingAgent`. It is
 - .NET SDK 10.0.400 or a later 10.0.x (`global.json`, `rollForward: latestFeature`). `dotnet --version` printed `10.0.400`.
 - A Bedrock API key for `us-east-1` with access to the two model ids below (or AWS credentials with the same access).
 - No Docker, database server or Redis: the index is a local SQLite file in `.data/`.
+
+## Quick start (local, with the PowerShell scripts)
+
+Run everything from the repo root in **Windows PowerShell**. You need two terminals: one for the API and one for the
+web app.
+
+**1. Once per person and machine: save your Bedrock key** (encrypted for your Windows user, never in the repo):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/set-bedrock.ps1
+```
+
+Paste the key at the hidden prompt (nothing shows while you paste) and press Enter on the other prompts to keep the
+defaults. It ends with `API key saved encrypted: True`. Details in [Bedrock](#bedrock).
+
+**2. Terminal 1: start the API** (http://localhost:5006). It builds, creates a dev token (copied to the clipboard) and
+passes the key only to the API process. The terminal stays busy while the API runs.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/start.ps1
+```
+
+Check http://localhost:5006/api/health: `"status": "ok"` and `"configured": true`. Add `-NoBuild` to skip the build on a restart.
+
+**3. Terminal 2: start the web app** (http://localhost:4200). The first run installs the npm packages. It reads the dev
+token itself and its proxy adds it to every `/api` call; it needs the API from step 2.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/start-web.ps1
+```
+
+Without the API (fixtures only): add `-Mock`. If Angular asks about sharing usage data, answer `N`.
+
+**4. Use it:** open http://localhost:4200, pick project, role, team and initiative, and ask. Swagger stays at
+http://localhost:5006/swagger as a fallback.
+
+**Stop:** Ctrl+C in each terminal.
+
+| Problem | Fix |
+|---|---|
+| `Port 5006 is already used ...` | Another API instance is running (a previous `start.ps1` or Visual Studio). Stop it first. |
+| Build error `MSB3027` or "file is locked by OnboardingAgent.Api" | The API is still running and locks the `.exe`. Stop it (Ctrl+C or end the `dotnet` process) and build again. |
+| `The argument 'scripts/start-web.ps1' ... does not exist` | You are not in the repo root. Run `cd` to the folder that contains `scripts/`, or use `../scripts/start-web.ps1` from `web/`. |
+| `The API is not answering on port 5006` | Start `start.ps1` first, or use `-Mock`. |
+| Chat shows "The model could not answer" (502) | Missing, wrong or expired Bedrock key. Run `set-bedrock.ps1` again. See [Troubleshooting](#troubleshooting). |
+| Running from Visual Studio (F5) | The API gets no Bedrock key and chat returns 502. Use `start.ps1` for the demo. |
+| The web app shows "The API returned an error (500)" and no teams | The API is not running (the web proxy answers 500 when it has no backend). Start it with `start.ps1`. |
+| `Set-Clipboard : Requested Clipboard operation did not succeed` | Another program holds the clipboard. `start.ps1` now only warns and starts the API anyway; the clipboard token is just for Swagger. |
+
+The web app is described in [web/README.md](web/README.md).
 
 ## Commands
 
@@ -152,7 +202,9 @@ Two ways to authenticate. Nothing goes in the repo either way.
    powershell -ExecutionPolicy Bypass -File scripts/start.ps1
    ```
 
-   **Check it:** `GET http://localhost:5006/api/health` must show `"auth": "apiKey"` and `"configured": true`.
+   **Check it:** `GET http://localhost:5006/api/health` must show `"configured": true`. `start.ps1` passes the key as
+   `AWS_BEARER_TOKEN_BEDROCK`, so `"auth"` reads `"awsCredentials"` even though the key is used; prove it with a chat
+   question, not with that label.
 
    **Replace the key (for example when it expires):** run `set-bedrock.ps1` again and paste the new key.
 
@@ -166,7 +218,7 @@ Two ways to authenticate. Nothing goes in the repo either way.
    - **The key is never stored in plain text.** It is encrypted with your Windows account (DPAPI) in
      `%LOCALAPPDATA%\OnboardingAgent\bedrock-api-key.txt`, so only you, on this machine, can decrypt it.
    - The region and model ids are not secret; they go in the API's user secrets.
-   - `./scripts/start.ps1` decrypts the key and passes it only to the API process (`Bedrock__ApiKey`), then
+   - `./scripts/start.ps1` decrypts the key and passes it only to the API process (`AWS_BEARER_TOKEN_BEDROCK`), then
      removes it when the API stops. The client sends it to Bedrock as a bearer token.
    - **Running the API from Visual Studio (F5) or plain `dotnet run` skips `start.ps1`, so the API gets no key.**
      `/api/health` then shows `"auth": "awsCredentials"` and chat returns 502. Use `start.ps1` for the demo.
@@ -197,6 +249,7 @@ registers itself through a `ServiceCollectionExtensions`.
 |---|---|
 | `src/OnboardingAgent.Api` | Host only: `Program.cs`, endpoints, Swagger, `appsettings.json`. |
 | `src/OnboardingAgent.Core` | Domain logic: ingestion, SQLite index, retrieval, catalog, onboarding routes, chat pipeline, contracts. Defines `IClaudeClient`; knows nothing about AWS. |
+| `src/OnboardingAgent.ExternalApi.Atlassian` | `IConfluenceClient` over the Atlassian Rovo MCP server (API token) and its options. |
 | `src/OnboardingAgent.ExternalApi.Bedrock` | `IClaudeClient` on AWS Bedrock (Converse API) and its options. |
 | `tools/OnboardingAgent.Evaluation` | Console runner for the 15 evaluation cases against a running API. |
 | `tests/OnboardingAgent.Api.UnitTests` | Tests against the real host (WebApplicationFactory): auth on every endpoint, chat contract, 502 and 429. |
@@ -225,6 +278,10 @@ does the same from the local machine.
   `appsettings*`, `CLAUDE.md`, ...).
 - Chunks: one per Markdown section. Sections over ~2000 characters (~500 tokens) are split with ~320 characters
   (~80 tokens) of overlap.
+
+The manifest has one default `projectId`. A document can set its own `"projectId"` (for example `"caps"`) to be indexed under
+another project; without it, it belongs to the manifest's project. Ingestion removes documents that left the manifest in
+every project already indexed. The overview documents of AICOE and CAPS use this.
 
 Manifest entry:
 
@@ -291,22 +348,64 @@ Status on 2026-10-28:
   `.data/manifest.before-excelmapping-scope.json` and `.data/manifest.pending.before-excelmapping-scope.json`.
 - A dry run of any pending manifest into a temporary index (`Corpus__StateFolder` pointing at a temp folder,
   `ingest --manifest <absolute path>`) leaves the live index untouched.
-- Still missing: the Confluence pages (access request, local setup, QA strategy, glossary, owners per team) and API support
-  for code citations (path, commit and lines are only inside the document text).
+- **Confluence copies (2026-10-29).** 14 pages of the HPS space "Architecture Design" tree were copied read-only to
+  `corpus/confluence/*.md`, with authors, assignee columns, example SSNs and personal links removed (checked with a pattern
+  scan; person names can only be reviewed by reading). The 5 ExcelMapping pages are in `manifest.json`; the 8 Onboarding
+  pages are in `manifest.pending.json` (not approved for Bedrock yet). `confluence-externaldatamapper-page.md` (one
+  sentence and a link) is not listed. Each entry has the page URL as `sourceUrl`. These copies are also the fallback if a
+  live sync from Confluence is added later: it must never delete them when it fails.
+- **AICOE and CAPS** are overview-only projects: one document each (`corpus/aicoe`, `corpus/caps`) with a per-document `projectId`.
+- Still missing: the Confluence pages for access request, local setup, QA strategy, glossary and owners per team, and API
+  support for code citations (path, commit and lines are only inside the document text).
+
+## Confluence sync (MCP)
+
+The app can refresh the Confluence copies in `corpus/confluence/` itself, through the Atlassian Rovo MCP server
+(`src/OnboardingAgent.ExternalApi.Atlassian`, official `ModelContextProtocol` client). It runs on demand, not per chat question, and is
+read-only: it only calls the page-read tool (`getConfluencePage`, Markdown).
+
+**Enable it**
+1. An Atlassian admin must allow API token authentication for the Rovo MCP server.
+2. Create an API token for your account and run `./scripts/set-atlassian.ps1` (hidden prompt; the token is stored encrypted with
+   DPAPI like the Bedrock key, the email goes in user secrets). Or set `Atlassian__Email` and `Atlassian__ApiToken` in the environment.
+   The token is never read from `appsettings.json` and is never logged.
+3. Run `./scripts/sync-confluence.ps1`, or `dotnet run --project src/OnboardingAgent.Api --no-launch-profile -- sync-confluence`
+   (with the two variables set), or `POST /api/admin/sync-confluence` (bearer token, loopback only; `./scripts/start.ps1` passes the token to the API).
+
+The pages are listed in `corpus/sources/confluence-pages.json` (page id and output file; the other fields mirror the manifest entry).
+To add a page, add it there and in the manifest. Each page is sanitized before it is written: author, owner, reviewer and assignee lines and
+columns, @mentions, emails, personal SharePoint/OneDrive links are removed, SSN/EIN-like values become placeholders and images become
+`[diagram omitted]`. **Person names inside prose cannot be detected: review every page the sync reports as `synced` before sharing the corpus.**
+After a sync that changed a page, ingestion runs as usual (checksums skip unchanged documents).
+
+The result lists `synced`, `unchanged` and `failed` (page id and reason); the command exits 1 if anything failed or the sync did not run.
+
+**Fallback.** With no token, a 401/403, a network failure or an unreadable page, the sync logs a `[Sync]` warning with the page id and reason,
+leaves the existing `.md` file untouched (files are written to a temporary file and moved, nothing is deleted or truncated) and continues; an
+authentication or connection failure stops the run and lists the remaining pages as not attempted. The API starts and answers from the
+Markdown corpus with no Atlassian credentials at all.
+
+**Not verified.** No run with a real token: the Atlassian token auth is not confirmed enabled. Verified only with a fake client (unit tests)
+and with an invalid dummy token against the live server (it answered 401 and the sync reported it). Not confirmed: that the server's
+`getConfluencePage` returns the same JSON shape (`content.nodes[0]`: title, body, lastModified, space) as the session tool the parser was written
+against, and that a first sync produces text identical to the hand copies (the first sync may rewrite every page). Atlassian's docs list
+`https://mcp.atlassian.com/v2/mcp` for API token auth with `Authorization: Basic base64(email:token)`; `Atlassian:Endpoint` can change it.
+Service account keys (`Bearer`) are not supported.
 
 ## Endpoints
 
 | Method | Path | What it does |
 |---|---|---|
 | GET | `/api/health` | Status, index size and configured model ids. No secrets. |
-| GET | `/api/projects` | Projects (today only `htg`). |
-| GET | `/api/projects/{projectId}/domains` | Teams with their initiatives and depth (`full` or `overview`). |
-| GET | `/api/onboarding/{projectId}/{role}?domain=&initiative=` | The four steps, with documents, links and suggested questions. |
-| POST | `/api/chat` | The plan's contract plus `answerId`, `claims` and `diagnostics`. |
+| GET | `/api/projects` | Projects: `htg` (full) plus `aicoe` and `caps`, which are overview only (one overview document each, no teams or initiatives; their code was not available). |
+| GET | `/api/projects/{projectId}/domains?language=` | Teams with their initiatives and depth (`full` or `overview`). With `language=en` an initiative uses its `nameEn` when it has one. |
+| GET | `/api/onboarding/{projectId}/{role}?domain=&initiative=&language=` | The four steps, with documents, links and suggested questions. With `language=en` each step uses its `en` texts, field by field, and falls back to Spanish. |
+| POST | `/api/chat` | The plan's contract plus `language`, `answerId`, `claims` and `diagnostics`. `language` is `es` or `en`; the answer is written in that language whatever language the question or the sources use. Without it the answer follows the question's language. |
 | GET | `/api/documents/{documentId}` | The document's text, metadata and sections, for the local evidence view. |
 | POST | `/api/feedback` | Useful or not useful for an `answerId` (P1). |
 | GET | `/api/gaps` | Questions answered with `insufficient` evidence (P1). |
 | POST | `/api/admin/reindex` | Re-runs the ingestion. Only from the local machine. |
+| POST | `/api/admin/sync-confluence` | Syncs the Confluence pages through MCP, then ingests. Only from the local machine; see Confluence sync. |
 
 Errors are ProblemDetails: 400 for validation (unknown project, role, domain, an initiative outside its domain,
 an empty or long message), 401 without a valid token, 429 over the rate limit, 502 when the model fails, 504 on
@@ -337,6 +436,17 @@ for each user (the token's subject), or for each IP without a user. Over the lim
    evaluation covers those.
 7. `sources` contains only the cited passages. An `insufficient` answer stores the question (not the conversation)
    in `.data/gaps.jsonl`.
+
+## Languages (Spanish and English)
+
+The UI, the onboarding routes and the agent's answers are available in Spanish (`es`) and English (`en`). Any other value
+of `language` is a 400. The corpus stays in English; when a source is quoted it keeps its original language.
+
+- `data/onboarding.json`: each step has Spanish `title`, `goal` and `suggestedQuestions`, and an optional `en` block with
+  the same three fields. A missing English field falls back to the Spanish one.
+- `data/projects.json`: an initiative can have `nameEn`.
+- `Prompts.LanguageRule`: the answer prompt fixes the language when the request has one.
+- A new route step or initiative needs both languages; the UI check is the English route in the browser.
 
 ## Data and state
 
@@ -431,8 +541,9 @@ record, rewrite fallback, and onboarding route precedence.
   tickets are pending approval and the Confluence pages are not imported, so several onboarding steps stay `pending` and the questions that depend on them return `insufficient`.
 - Bedrock region and both model ids were verified with real calls on 2026-10-28 (health, evaluation and a sample question).
 - Rhaegal and Vhagar only have the team overview in `teams.md`; the answers say so and do not go deeper.
-- No Angular project was found, so proxy, bearer-token setup, source opening and error/retry UI are not verified. The API
-  allows CORS from `http://localhost:4200`; the frontend must send `Authorization: Bearer <token>`.
+- The Angular app is in `web/` (see [web/README.md](web/README.md)). It was verified in mock mode (build, unit tests, a
+  browser walkthrough) but **not against the real API**: the proxy that adds the bearer token and the error/retry paths
+  with real responses are not verified. The API allows CORS from `http://localhost:4200`.
 - Not verified from a clean machine: the instructions were run in this Windows account, with its saved credential and tokens.
 - No claim is made about onboarding time saved.
 - No embeddings: BM25 plus the Haiku rerank. `Chat:MinScore` is 0 until the evaluation calibrates it.

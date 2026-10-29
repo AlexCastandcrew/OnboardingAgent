@@ -1,321 +1,929 @@
 {
-  "_comment": "Steps per project/role/domain/initiative. The most specific route that defines a step wins (initiative > domain > general, then exact role > '*'). A documentId not yet in the corpus leaves the step 'pending'.",
-  "routes": [
-    {
-      "projectId": "htg",
-      "role": "*",
-      "steps": [
-        {
-          "step": 1,
-          "key": "overview",
-          "title": "Overview",
-          "goal": "Entender qué es HTG, sus componentes principales y los equipos que lo construyen.",
-          "documentIds": [ "teams", "repo-architecture-migration", "repo-module-inventory" ],
-          "suggestedQuestions": [ "¿Qué equipos trabajan en HTG y en qué frentes?", "¿Cuáles son los componentes principales de HTG?" ]
-        },
-        {
-          "step": 2,
-          "key": "access",
-          "title": "Accesos",
-          "goal": "Pedir acceso a las aplicaciones: qué ticket crear, a quién y qué datos pide.",
-          "documentIds": [ "confluence-access-request" ],
-          "suggestedQuestions": [ "¿Cómo pido acceso a las aplicaciones de HTG?" ]
-        },
-        {
-          "step": 3,
-          "key": "local-setup",
-          "title": "Configurar y probar en local",
-          "goal": "Clonar el repo, instalar dependencias, configurar y ejecutar HTG en local.",
-          "documentIds": [ "repo-handbook-readme", "repo-daily-workflow", "confluence-local-setup" ],
-          "links": [ { "label": "Repositorio htg-server", "url": "https://github.com/cast-and-crew/htg-server" } ],
-          "suggestedQuestions": [ "¿Cómo ejecuto HTG en local?", "¿Cuál es el flujo de trabajo diario del equipo?" ]
-        },
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas del dominio",
-          "goal": "Preguntas para empezar; el chat acepta cualquier otra.",
-          "documentIds": [ "teams" ],
-          "suggestedQuestions": [ "¿Qué equipos trabajan en HTG y en qué frentes?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "developer",
-      "steps": [
-        {
-          "step": 3,
-          "key": "local-setup",
-          "title": "Configurar y probar en local",
-          "goal": "Clonar, compilar, configurar y ejecutar el backend y el frontend; conocer los estándares de código.",
-          "documentIds": [ "repo-handbook-readme", "repo-daily-workflow", "confluence-local-setup", "repo-frontend-standards", "repo-kafka-readme", "repo-objectcache-readme" ],
-          "links": [ { "label": "Repositorio htg-server", "url": "https://github.com/cast-and-crew/htg-server" } ],
-          "suggestedQuestions": [ "¿Cómo ejecuto HTG en local?", "¿Qué estándares sigue el frontend?", "¿Cómo se usa Kafka en HTG?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "qa",
-      "steps": [
-        {
-          "step": 3,
-          "key": "local-setup",
-          "title": "Configurar, probar y validar",
-          "goal": "Tener un entorno donde probar y conocer cómo se versiona y entrega lo que se valida.",
-          "documentIds": [ "confluence-qa-strategy", "repo-fix-version-convention", "repo-active-fix-versions", "repo-db-scripts", "confluence-local-setup" ],
-          "links": [ { "label": "Repositorio htg-server", "url": "https://github.com/cast-and-crew/htg-server" } ],
-          "suggestedQuestions": [ "¿Cómo se asigna la fix version a un ticket?", "¿Qué debo revisar en los scripts de base de datos?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "leader",
-      "steps": [
-        {
-          "step": 1,
-          "key": "overview",
-          "title": "Overview y responsables",
-          "goal": "Ver los componentes de HTG, qué equipo responde por cada frente y cómo se mide la entrega.",
-          "documentIds": [ "teams", "repo-architecture-migration", "repo-module-inventory", "repo-metrics-tracking" ],
-          "suggestedQuestions": [ "¿Qué equipo es responsable de cada frente?", "¿Cómo se miden las entregas del equipo?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "*",
-      "domain": "rhaegal",
-      "steps": [
-        {
-          "step": 1,
-          "key": "overview",
-          "title": "Overview de Rhaegal",
-          "goal": "Conocer los frentes actuales del equipo Rhaegal.",
-          "documentIds": [ "teams" ],
-          "suggestedQuestions": [ "¿En qué frentes trabaja Rhaegal?" ]
-        },
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas del dominio",
-          "goal": "La documentación de Rhaegal solo cubre el overview del equipo por ahora.",
-          "documentIds": [ "teams" ],
-          "suggestedQuestions": [ "¿En qué frentes trabaja Rhaegal?", "¿Qué es la iniciativa YEP?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "*",
-      "domain": "vhagar",
-      "steps": [
-        {
-          "step": 1,
-          "key": "overview",
-          "title": "Overview de Vhagar",
-          "goal": "Conocer los frentes actuales del equipo Vhagar.",
-          "documentIds": [ "teams" ],
-          "suggestedQuestions": [ "¿En qué frentes trabaja Vhagar?" ]
-        },
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas del dominio",
-          "goal": "La documentación de Vhagar solo cubre el overview del equipo por ahora.",
-          "documentIds": [ "teams" ],
-          "suggestedQuestions": [ "¿En qué frentes trabaja Vhagar?", "¿Qué es Timecard Splits?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "*",
-      "domain": "silverwing",
-      "steps": [
-        {
-          "step": 1,
-          "key": "overview",
-          "title": "Overview de Silverwing",
-          "goal": "Conocer los frentes del equipo Silverwing: Onboarding Documents y Excel Import.",
-          "documentIds": [ "teams", "jira-h2g-6493", "jira-h2g-7273", "repo-excelmapping-design-7273" ],
-          "suggestedQuestions": [ "¿En qué frentes trabaja Silverwing?" ]
-        },
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas del dominio",
-          "goal": "Preguntas sobre los frentes de Silverwing.",
-          "documentIds": [ "teams" ],
-          "suggestedQuestions": [ "¿En qué frentes trabaja Silverwing?", "¿Qué es Onboarding Documents Fase 1?", "¿Qué hace el Excel Import de Executive Officer Payroll?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "*",
-      "domain": "silverwing",
-      "initiative": "H2G-6893",
-      "steps": [
-        {
-          "step": 1,
-          "key": "overview",
-          "title": "Overview: Excel Import (Executive Officer Payroll)",
-          "goal": "Entender qué importa el Excel de Executive Officer Payroll y cómo está diseñado.",
-          "documentIds": [ "jira-h2g-7273", "repo-excelmapping-design-7273", "jira-h2g-7382", "jira-h2g-7266", "repo-excelmapping-design-7382", "repo-excelmapping-design-7266" ],
-          "suggestedQuestions": [ "¿Qué hace el Excel Import de Executive Officer Payroll?" ]
-        },
-        {
-          "step": 3,
-          "key": "local-setup",
-          "title": "Configurar y probar el Excel Import en local",
-          "goal": "Ejecutar HTG en local y probar un import de Excel.",
-          "documentIds": [ "repo-handbook-readme", "confluence-local-setup", "repo-excelmapping-design-7382", "repo-excelmapping-code" ],
-          "links": [ { "label": "Repositorio htg-server", "url": "https://github.com/cast-and-crew/htg-server" } ],
-          "suggestedQuestions": [ "¿Cómo pruebo un import de Excel en local?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "developer",
-      "domain": "silverwing",
-      "initiative": "H2G-6893",
-      "steps": [
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas: Excel Import (Developer)",
-          "goal": "Preguntas técnicas sobre el diseño y el código del Excel Import.",
-          "documentIds": [ "jira-h2g-7273", "repo-excelmapping-design-7273", "jira-h2g-7382", "repo-excelmapping-design-7382", "jira-h2g-7266", "repo-excelmapping-design-7266", "jira-h2g-7165", "repo-excelmapping-design-7165", "jira-h2g-7060", "repo-excelmapping-design-7060", "repo-excelmapping-code" ],
-          "suggestedQuestions": [ "¿Qué cambió en H2G-7165?", "¿Cómo se mapean las columnas del Excel a los campos de HTG?", "¿Qué validaciones hace el import antes de guardar?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "qa",
-      "domain": "silverwing",
-      "initiative": "H2G-6893",
-      "steps": [
-        {
-          "step": 3,
-          "key": "local-setup",
-          "title": "Probar y validar el Excel Import",
-          "goal": "Saber qué escenarios probar y qué resultado esperar en un import de Excel.",
-          "documentIds": [ "confluence-qa-strategy", "jira-h2g-7273", "repo-excelmapping-design-7273", "jira-h2g-7060", "repo-excelmapping-design-7060", "repo-fix-version-convention" ],
-          "links": [ { "label": "Repositorio htg-server", "url": "https://github.com/cast-and-crew/htg-server" } ],
-          "suggestedQuestions": [ "¿Qué escenarios debo probar en el Excel Import?" ]
-        },
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas: Excel Import (QA)",
-          "goal": "Preguntas sobre cómo validar el Excel Import.",
-          "documentIds": [ "jira-h2g-7273", "repo-excelmapping-design-7273", "jira-h2g-7060", "repo-excelmapping-design-7060", "jira-h2g-7165", "repo-excelmapping-design-7165" ],
-          "suggestedQuestions": [ "¿Qué escenarios debo probar en el Excel Import?", "¿Qué errores debe mostrar el import con un archivo inválido?", "¿Qué criterios de aceptación tiene H2G-7273?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "leader",
-      "domain": "silverwing",
-      "initiative": "H2G-6893",
-      "steps": [
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas: Excel Import (Leader)",
-          "goal": "Preguntas sobre alcance, estado y responsables del Excel Import.",
-          "documentIds": [ "jira-h2g-7273", "repo-excelmapping-design-7273", "jira-h2g-7382", "repo-excelmapping-design-7382", "jira-h2g-7266", "repo-excelmapping-design-7266", "teams" ],
-          "suggestedQuestions": [ "¿Cuál es el alcance del Excel Import de Executive Officer Payroll?", "¿Qué tickets componen la iniciativa H2G-6893?", "¿Qué equipo es responsable del Excel Import?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "*",
-      "domain": "silverwing",
-      "initiative": "H2G-6627",
-      "steps": [
-        {
-          "step": 1,
-          "key": "overview",
-          "title": "Overview: Onboarding Documents Fase 1",
-          "goal": "Entender qué documentos de onboarding cubre la fase 1 y cómo fluyen.",
-          "documentIds": [ "jira-h2g-6493", "jira-h2g-6389", "jira-h2g-6838", "repo-onboarding-package-linkage", "repo-onboarding-lookup-fallback", "repo-onboarding-w4-persistence" ],
-          "suggestedQuestions": [ "¿Qué es Onboarding Documents Fase 1?" ]
-        },
-        {
-          "step": 3,
-          "key": "local-setup",
-          "title": "Configurar y probar Onboarding Documents en local",
-          "goal": "Ejecutar HTG en local y probar el flujo de documentos de onboarding.",
-          "documentIds": [ "repo-handbook-readme", "confluence-local-setup", "repo-onboarding-package-linkage", "repo-onboarding-lookup-fallback", "repo-onboarding-w4-persistence", "repo-kafka-readme" ],
-          "links": [ { "label": "Repositorio htg-server", "url": "https://github.com/cast-and-crew/htg-server" } ],
-          "suggestedQuestions": [ "¿Cómo pruebo el flujo de documentos de onboarding en local?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "developer",
-      "domain": "silverwing",
-      "initiative": "H2G-6627",
-      "steps": [
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas: Onboarding Documents (Developer)",
-          "goal": "Preguntas técnicas sobre mensajes, servicios y código de Onboarding Documents.",
-          "documentIds": [ "jira-h2g-6493", "jira-h2g-6389", "jira-h2g-6838", "jira-h2g-6776", "jira-h2g-6532", "repo-onboarding-package-linkage", "repo-onboarding-lookup-fallback", "repo-onboarding-w4-persistence" ],
-          "suggestedQuestions": [ "¿Qué mensaje de Kafka usa Onboarding Documents según H2G-6493?", "¿Qué servicios intervienen en el flujo de documentos?", "¿Qué cambió en H2G-6776?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "qa",
-      "domain": "silverwing",
-      "initiative": "H2G-6627",
-      "steps": [
-        {
-          "step": 3,
-          "key": "local-setup",
-          "title": "Probar y validar Onboarding Documents",
-          "goal": "Saber qué escenarios probar en el flujo de documentos de onboarding.",
-          "documentIds": [ "confluence-qa-strategy", "jira-h2g-6389", "jira-h2g-6838", "repo-fix-version-convention" ],
-          "links": [ { "label": "Repositorio htg-server", "url": "https://github.com/cast-and-crew/htg-server" } ],
-          "suggestedQuestions": [ "¿Qué escenarios debo probar en Onboarding Documents?" ]
-        },
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas: Onboarding Documents (QA)",
-          "goal": "Preguntas sobre cómo validar Onboarding Documents.",
-          "documentIds": [ "jira-h2g-6389", "jira-h2g-6838", "jira-h2g-6532" ],
-          "suggestedQuestions": [ "¿Qué escenarios debo probar en Onboarding Documents?", "¿Qué criterios de aceptación tiene H2G-6389?", "¿Qué pasa si un documento falla al generarse?" ]
-        }
-      ]
-    },
-    {
-      "projectId": "htg",
-      "role": "leader",
-      "domain": "silverwing",
-      "initiative": "H2G-6627",
-      "steps": [
-        {
-          "step": 4,
-          "key": "domain-questions",
-          "title": "Preguntas: Onboarding Documents (Leader)",
-          "goal": "Preguntas sobre alcance, estado y responsables de Onboarding Documents.",
-          "documentIds": [ "jira-h2g-6493", "jira-h2g-6389", "jira-h2g-6838", "teams" ],
-          "suggestedQuestions": [ "¿Cuál es el alcance de Onboarding Documents Fase 1?", "¿Qué tickets componen la iniciativa H2G-6627?", "¿Qué queda para la Fase 2?" ]
-        }
-      ]
-    }
-  ]
+    "_comment":  "Steps per project/role/domain/initiative. The most specific route that defines a step wins (initiative \u003e domain \u003e general, then exact role \u003e \u0027*\u0027). A documentId not yet in the corpus leaves the step \u0027pending\u0027.",
+    "routes":  [
+                   {
+                       "projectId":  "htg",
+                       "role":  "*",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview",
+                                         "goal":  "Entender qué es HTG, sus componentes principales y los equipos que lo construyen.",
+                                         "documentIds":  [
+                                                             "teams",
+                                                             "repo-architecture-migration",
+                                                             "repo-module-inventory"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué equipos trabajan en HTG y en qué frentes?",
+                                                                    "¿Cuáles son los componentes principales de HTG?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Overview",
+                                                    "goal":  "Understand what HTG is, its main components and the teams that build it.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which teams work on HTG and on what workstreams?",
+                                                                               "What are the main components of HTG?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  2,
+                                         "key":  "access",
+                                         "title":  "Accesos",
+                                         "goal":  "Pedir acceso a las aplicaciones: qué ticket crear, a quién y qué datos pide.",
+                                         "documentIds":  [
+                                                             "confluence-access-request"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo pido acceso a las aplicaciones de HTG?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Access",
+                                                    "goal":  "Request access to the applications: which ticket to create, who to ask and what data it asks for.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I request access to the HTG applications?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Configurar y probar en local",
+                                         "goal":  "Clonar el repo, instalar dependencias, configurar y ejecutar HTG en local.",
+                                         "documentIds":  [
+                                                             "repo-handbook-readme",
+                                                             "repo-daily-workflow",
+                                                             "confluence-local-setup"
+                                                         ],
+                                         "links":  [
+                                                       {
+                                                           "label":  "htg-server (GitHub)",
+                                                           "url":  "https://github.com/cast-and-crew/htg-server"
+                                                       }
+                                                   ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo ejecuto HTG en local?",
+                                                                    "¿Cuál es el flujo de trabajo diario del equipo?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Set up and test locally",
+                                                    "goal":  "Clone the repo, install dependencies, configure and run HTG locally.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I run HTG locally?",
+                                                                               "What is the team\u0027s daily workflow?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas del dominio",
+                                         "goal":  "Preguntas para empezar; el chat acepta cualquier otra.",
+                                         "documentIds":  [
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué equipos trabajan en HTG y en qué frentes?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Domain questions",
+                                                    "goal":  "Questions to get started; the chat accepts any other.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which teams work on HTG and on what workstreams?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "developer",
+                       "steps":  [
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Configurar y probar en local",
+                                         "goal":  "Clonar, compilar, configurar y ejecutar el backend y el frontend; conocer los estándares de código.",
+                                         "documentIds":  [
+                                                             "repo-handbook-readme",
+                                                             "repo-daily-workflow",
+                                                             "confluence-local-setup",
+                                                             "repo-frontend-standards",
+                                                             "repo-kafka-readme",
+                                                             "repo-objectcache-readme"
+                                                         ],
+                                         "links":  [
+                                                       {
+                                                           "label":  "htg-server (GitHub)",
+                                                           "url":  "https://github.com/cast-and-crew/htg-server"
+                                                       }
+                                                   ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo ejecuto HTG en local?",
+                                                                    "¿Qué estándares sigue el frontend?",
+                                                                    "¿Cómo se usa Kafka en HTG?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Set up and test locally",
+                                                    "goal":  "Clone, build, configure and run the backend and the frontend; learn the code standards.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I run HTG locally?",
+                                                                               "What standards does the frontend follow?",
+                                                                               "How is Kafka used in HTG?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "qa",
+                       "steps":  [
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Configurar, probar y validar",
+                                         "goal":  "Tener un entorno donde probar y conocer cómo se versiona y entrega lo que se valida.",
+                                         "documentIds":  [
+                                                             "confluence-qa-strategy",
+                                                             "repo-fix-version-convention",
+                                                             "repo-active-fix-versions",
+                                                             "repo-db-scripts",
+                                                             "confluence-local-setup"
+                                                         ],
+                                         "links":  [
+                                                       {
+                                                           "label":  "htg-server (GitHub)",
+                                                           "url":  "https://github.com/cast-and-crew/htg-server"
+                                                       }
+                                                   ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo se asigna la fix version a un ticket?",
+                                                                    "¿Qué debo revisar en los scripts de base de datos?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Set up, test and validate",
+                                                    "goal":  "Have an environment to test in and learn how what you validate is versioned and delivered.",
+                                                    "suggestedQuestions":  [
+                                                                               "How is the fix version assigned to a ticket?",
+                                                                               "What should I check in the database scripts?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "leader",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview y responsables",
+                                         "goal":  "Ver los componentes de HTG, qué equipo responde por cada frente y cómo se mide la entrega.",
+                                         "documentIds":  [
+                                                             "teams",
+                                                             "repo-architecture-migration",
+                                                             "repo-module-inventory",
+                                                             "repo-metrics-tracking"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué equipo es responsable de cada frente?",
+                                                                    "¿Cómo se miden las entregas del equipo?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Overview and owners",
+                                                    "goal":  "See the HTG components, which team answers for each workstream and how delivery is measured.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which team is responsible for each workstream?",
+                                                                               "How is the team\u0027s delivery measured?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "*",
+                       "domain":  "rhaegal",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview de Rhaegal",
+                                         "goal":  "Conocer los frentes actuales del equipo Rhaegal.",
+                                         "documentIds":  [
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿En qué frentes trabaja Rhaegal?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Rhaegal overview",
+                                                    "goal":  "Learn the current workstreams of the Rhaegal team.",
+                                                    "suggestedQuestions":  [
+                                                                               "What workstreams does Rhaegal work on?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas del dominio",
+                                         "goal":  "La documentación de Rhaegal solo cubre el overview del equipo por ahora.",
+                                         "documentIds":  [
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿En qué frentes trabaja Rhaegal?",
+                                                                    "¿Qué es la iniciativa YEP?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Domain questions",
+                                                    "goal":  "Rhaegal documentation only covers the team overview for now.",
+                                                    "suggestedQuestions":  [
+                                                                               "What workstreams does Rhaegal work on?",
+                                                                               "What is the YEP initiative?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "*",
+                       "domain":  "vhagar",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview de Vhagar",
+                                         "goal":  "Conocer los frentes actuales del equipo Vhagar.",
+                                         "documentIds":  [
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿En qué frentes trabaja Vhagar?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Vhagar overview",
+                                                    "goal":  "Learn the current workstreams of the Vhagar team.",
+                                                    "suggestedQuestions":  [
+                                                                               "What workstreams does Vhagar work on?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas del dominio",
+                                         "goal":  "La documentación de Vhagar solo cubre el overview del equipo por ahora.",
+                                         "documentIds":  [
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿En qué frentes trabaja Vhagar?",
+                                                                    "¿Qué es Timecard Splits?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Domain questions",
+                                                    "goal":  "Vhagar documentation only covers the team overview for now.",
+                                                    "suggestedQuestions":  [
+                                                                               "What workstreams does Vhagar work on?",
+                                                                               "What is Timecard Splits?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "*",
+                       "domain":  "silverwing",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview de Silverwing",
+                                         "goal":  "Conocer los frentes del equipo Silverwing: Onboarding Documents y Excel Import.",
+                                         "documentIds":  [
+                                                             "teams",
+                                                             "jira-h2g-6493",
+                                                             "jira-h2g-7273",
+                                                             "repo-excelmapping-design-7273"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿En qué frentes trabaja Silverwing?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Silverwing overview",
+                                                    "goal":  "Learn the workstreams of the Silverwing team: Onboarding Documents and Excel Import.",
+                                                    "suggestedQuestions":  [
+                                                                               "What workstreams does Silverwing work on?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas del dominio",
+                                         "goal":  "Preguntas sobre los frentes de Silverwing.",
+                                         "documentIds":  [
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿En qué frentes trabaja Silverwing?",
+                                                                    "¿Qué es Onboarding Documents Fase 1?",
+                                                                    "¿Qué hace el Excel Import de Executive Officer Payroll?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Domain questions",
+                                                    "goal":  "Questions about the Silverwing workstreams.",
+                                                    "suggestedQuestions":  [
+                                                                               "What workstreams does Silverwing work on?",
+                                                                               "What is Onboarding Documents Phase 1?",
+                                                                               "What does the Executive Officer Payroll Excel Import do?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "*",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6893",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview: Excel Import (Executive Officer Payroll)",
+                                         "goal":  "Entender qué importa el Excel de Executive Officer Payroll y cómo está diseñado.",
+                                         "documentIds":  [
+                                                             "jira-h2g-7273",
+                                                             "repo-excelmapping-design-7273",
+                                                             "jira-h2g-7382",
+                                                             "jira-h2g-7266",
+                                                             "repo-excelmapping-design-7382",
+                                                             "repo-excelmapping-design-7266"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué hace el Excel Import de Executive Officer Payroll?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Overview: Excel Import (Executive Officer Payroll)",
+                                                    "goal":  "Understand what the Executive Officer Payroll Excel imports and how it is designed.",
+                                                    "suggestedQuestions":  [
+                                                                               "What does the Executive Officer Payroll Excel Import do?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Configurar y probar el Excel Import en local",
+                                         "goal":  "Ejecutar HTG en local y probar un import de Excel.",
+                                         "documentIds":  [
+                                                             "repo-handbook-readme",
+                                                             "confluence-local-setup",
+                                                             "repo-excelmapping-design-7382",
+                                                             "repo-excelmapping-code"
+                                                         ],
+                                         "links":  [
+                                                       {
+                                                           "label":  "htg-server (GitHub)",
+                                                           "url":  "https://github.com/cast-and-crew/htg-server"
+                                                       }
+                                                   ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo pruebo un import de Excel en local?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Set up and test the Excel Import locally",
+                                                    "goal":  "Run HTG locally and test an Excel import.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I test an Excel import locally?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "developer",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6893",
+                       "steps":  [
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas: Excel Import (Developer)",
+                                         "goal":  "Preguntas técnicas sobre el diseño y el código del Excel Import.",
+                                         "documentIds":  [
+                                                             "jira-h2g-7273",
+                                                             "repo-excelmapping-design-7273",
+                                                             "jira-h2g-7382",
+                                                             "repo-excelmapping-design-7382",
+                                                             "jira-h2g-7266",
+                                                             "repo-excelmapping-design-7266",
+                                                             "jira-h2g-7165",
+                                                             "repo-excelmapping-design-7165",
+                                                             "jira-h2g-7060",
+                                                             "repo-excelmapping-design-7060",
+                                                             "repo-excelmapping-code"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué cambió en H2G-7165?",
+                                                                    "¿Cómo se mapean las columnas del Excel a los campos de HTG?",
+                                                                    "¿Qué validaciones hace el import antes de guardar?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Questions: Excel Import (Developer)",
+                                                    "goal":  "Technical questions about the design and code of the Excel Import.",
+                                                    "suggestedQuestions":  [
+                                                                               "What changed in H2G-7165?",
+                                                                               "How are the Excel columns mapped to HTG fields?",
+                                                                               "What validations does the import run before saving?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "qa",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6893",
+                       "steps":  [
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Probar y validar el Excel Import",
+                                         "goal":  "Saber qué escenarios probar y qué resultado esperar en un import de Excel.",
+                                         "documentIds":  [
+                                                             "confluence-qa-strategy",
+                                                             "jira-h2g-7273",
+                                                             "repo-excelmapping-design-7273",
+                                                             "jira-h2g-7060",
+                                                             "repo-excelmapping-design-7060",
+                                                             "repo-fix-version-convention"
+                                                         ],
+                                         "links":  [
+                                                       {
+                                                           "label":  "htg-server (GitHub)",
+                                                           "url":  "https://github.com/cast-and-crew/htg-server"
+                                                       }
+                                                   ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué escenarios debo probar en el Excel Import?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Test and validate the Excel Import",
+                                                    "goal":  "Know which scenarios to test and what result to expect in an Excel import.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which scenarios should I test in the Excel Import?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas: Excel Import (QA)",
+                                         "goal":  "Preguntas sobre cómo validar el Excel Import.",
+                                         "documentIds":  [
+                                                             "jira-h2g-7273",
+                                                             "repo-excelmapping-design-7273",
+                                                             "jira-h2g-7060",
+                                                             "repo-excelmapping-design-7060",
+                                                             "jira-h2g-7165",
+                                                             "repo-excelmapping-design-7165"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué escenarios debo probar en el Excel Import?",
+                                                                    "¿Qué errores debe mostrar el import con un archivo inválido?",
+                                                                    "¿Qué criterios de aceptación tiene H2G-7273?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Questions: Excel Import (QA)",
+                                                    "goal":  "Questions about how to validate the Excel Import.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which scenarios should I test in the Excel Import?",
+                                                                               "What errors should the import show with an invalid file?",
+                                                                               "What acceptance criteria does H2G-7273 have?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "leader",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6893",
+                       "steps":  [
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas: Excel Import (Leader)",
+                                         "goal":  "Preguntas sobre alcance, estado y responsables del Excel Import.",
+                                         "documentIds":  [
+                                                             "jira-h2g-7273",
+                                                             "repo-excelmapping-design-7273",
+                                                             "jira-h2g-7382",
+                                                             "repo-excelmapping-design-7382",
+                                                             "jira-h2g-7266",
+                                                             "repo-excelmapping-design-7266",
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cuál es el alcance del Excel Import de Executive Officer Payroll?",
+                                                                    "¿Qué tickets componen la iniciativa H2G-6893?",
+                                                                    "¿Qué equipo es responsable del Excel Import?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Questions: Excel Import (Leader)",
+                                                    "goal":  "Questions about scope, status and owners of the Excel Import.",
+                                                    "suggestedQuestions":  [
+                                                                               "What is the scope of the Executive Officer Payroll Excel Import?",
+                                                                               "Which tickets make up initiative H2G-6893?",
+                                                                               "Which team is responsible for the Excel Import?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "*",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6627",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview: Onboarding Documents Fase 1",
+                                         "goal":  "Entender qué documentos de onboarding cubre la fase 1 y cómo fluyen.",
+                                         "documentIds":  [
+                                                             "jira-h2g-6493",
+                                                             "jira-h2g-6389",
+                                                             "jira-h2g-6838",
+                                                             "repo-onboarding-package-linkage",
+                                                             "repo-onboarding-lookup-fallback",
+                                                             "repo-onboarding-w4-persistence"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué es Onboarding Documents Fase 1?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Overview: Onboarding Documents Phase 1",
+                                                    "goal":  "Understand which onboarding documents phase 1 covers and how they flow.",
+                                                    "suggestedQuestions":  [
+                                                                               "What is Onboarding Documents Phase 1?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Configurar y probar Onboarding Documents en local",
+                                         "goal":  "Ejecutar HTG en local y probar el flujo de documentos de onboarding.",
+                                         "documentIds":  [
+                                                             "repo-handbook-readme",
+                                                             "confluence-local-setup",
+                                                             "repo-onboarding-package-linkage",
+                                                             "repo-onboarding-lookup-fallback",
+                                                             "repo-onboarding-w4-persistence",
+                                                             "repo-kafka-readme"
+                                                         ],
+                                         "links":  [
+                                                       {
+                                                           "label":  "htg-server (GitHub)",
+                                                           "url":  "https://github.com/cast-and-crew/htg-server"
+                                                       }
+                                                   ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo pruebo el flujo de documentos de onboarding en local?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Set up and test Onboarding Documents locally",
+                                                    "goal":  "Run HTG locally and test the onboarding documents flow.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I test the onboarding documents flow locally?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "developer",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6627",
+                       "steps":  [
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas: Onboarding Documents (Developer)",
+                                         "goal":  "Preguntas técnicas sobre mensajes, servicios y código de Onboarding Documents.",
+                                         "documentIds":  [
+                                                             "jira-h2g-6493",
+                                                             "jira-h2g-6389",
+                                                             "jira-h2g-6838",
+                                                             "jira-h2g-6776",
+                                                             "jira-h2g-6532",
+                                                             "repo-onboarding-package-linkage",
+                                                             "repo-onboarding-lookup-fallback",
+                                                             "repo-onboarding-w4-persistence"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué mensaje de Kafka usa Onboarding Documents según H2G-6493?",
+                                                                    "¿Qué servicios intervienen en el flujo de documentos?",
+                                                                    "¿Qué cambió en H2G-6776?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Questions: Onboarding Documents (Developer)",
+                                                    "goal":  "Technical questions about messages, services and code of Onboarding Documents.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which Kafka message does Onboarding Documents use according to H2G-6493?",
+                                                                               "Which services take part in the documents flow?",
+                                                                               "What changed in H2G-6776?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "qa",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6627",
+                       "steps":  [
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Probar y validar Onboarding Documents",
+                                         "goal":  "Saber qué escenarios probar en el flujo de documentos de onboarding.",
+                                         "documentIds":  [
+                                                             "confluence-qa-strategy",
+                                                             "jira-h2g-6389",
+                                                             "jira-h2g-6838",
+                                                             "repo-fix-version-convention"
+                                                         ],
+                                         "links":  [
+                                                       {
+                                                           "label":  "htg-server (GitHub)",
+                                                           "url":  "https://github.com/cast-and-crew/htg-server"
+                                                       }
+                                                   ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué escenarios debo probar en Onboarding Documents?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Test and validate Onboarding Documents",
+                                                    "goal":  "Know which scenarios to test in the onboarding documents flow.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which scenarios should I test in Onboarding Documents?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas: Onboarding Documents (QA)",
+                                         "goal":  "Preguntas sobre cómo validar Onboarding Documents.",
+                                         "documentIds":  [
+                                                             "jira-h2g-6389",
+                                                             "jira-h2g-6838",
+                                                             "jira-h2g-6532"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué escenarios debo probar en Onboarding Documents?",
+                                                                    "¿Qué criterios de aceptación tiene H2G-6389?",
+                                                                    "¿Qué pasa si un documento falla al generarse?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Questions: Onboarding Documents (QA)",
+                                                    "goal":  "Questions about how to validate Onboarding Documents.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which scenarios should I test in Onboarding Documents?",
+                                                                               "What acceptance criteria does H2G-6389 have?",
+                                                                               "What happens if a document fails to be generated?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "htg",
+                       "role":  "leader",
+                       "domain":  "silverwing",
+                       "initiative":  "H2G-6627",
+                       "steps":  [
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas: Onboarding Documents (Leader)",
+                                         "goal":  "Preguntas sobre alcance, estado y responsables de Onboarding Documents.",
+                                         "documentIds":  [
+                                                             "jira-h2g-6493",
+                                                             "jira-h2g-6389",
+                                                             "jira-h2g-6838",
+                                                             "teams"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cuál es el alcance de Onboarding Documents Fase 1?",
+                                                                    "¿Qué tickets componen la iniciativa H2G-6627?",
+                                                                    "¿Qué queda para la Fase 2?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Questions: Onboarding Documents (Leader)",
+                                                    "goal":  "Questions about scope, status and owners of Onboarding Documents.",
+                                                    "suggestedQuestions":  [
+                                                                               "What is the scope of Onboarding Documents Phase 1?",
+                                                                               "Which tickets make up initiative H2G-6627?",
+                                                                               "What is left for Phase 2?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "aicoe",
+                       "role":  "*",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview",
+                                         "goal":  "Entender qué es AICOE y cómo lo usa HTG. Solo overview: el código aún no está disponible.",
+                                         "documentIds":  [
+                                                             "aicoe-overview"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué es AICOE?",
+                                                                    "¿Cómo usa HTG a AICOE para Excel Import?",
+                                                                    "¿Qué flujos de onboarding usan AICOE?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Overview",
+                                                    "goal":  "Understand what AICOE is and how HTG uses it. Overview only: the code is not available yet.",
+                                                    "suggestedQuestions":  [
+                                                                               "What is AICOE?",
+                                                                               "How does HTG use AICOE for Excel Import?",
+                                                                               "Which onboarding flows use AICOE?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  2,
+                                         "key":  "access",
+                                         "title":  "Accesos",
+                                         "goal":  "Pedir acceso a AICOE: qué ticket crear y a quién.",
+                                         "documentIds":  [
+                                                             "confluence-aicoe-access"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo pido acceso a AICOE?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Access",
+                                                    "goal":  "Request access to AICOE: which ticket to create and who to ask.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I request access to AICOE?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Configurar y probar en local",
+                                         "goal":  "Ejecutar y probar AICOE en local. Sin acceso al código por ahora.",
+                                         "documentIds":  [
+                                                             "confluence-aicoe-local-setup"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo ejecuto AICOE en local?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Set up and test locally",
+                                                    "goal":  "Run and test AICOE locally. No access to the code for now.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I run AICOE locally?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas de AICOE",
+                                         "goal":  "Preguntas sobre lo que HTG documenta de AICOE; el chat acepta cualquier otra.",
+                                         "documentIds":  [
+                                                             "aicoe-overview"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué contiene el JSON de un paquete de onboarding?",
+                                                                    "¿Qué topic de Kafka usa AICOE para Excel?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "AICOE questions",
+                                                    "goal":  "Questions about what HTG documents about AICOE; the chat accepts any other.",
+                                                    "suggestedQuestions":  [
+                                                                               "What does an onboarding package JSON contain?",
+                                                                               "Which Kafka topic does AICOE use for Excel?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   },
+                   {
+                       "projectId":  "caps",
+                       "role":  "*",
+                       "steps":  [
+                                     {
+                                         "step":  1,
+                                         "key":  "overview",
+                                         "title":  "Overview",
+                                         "goal":  "Entender qué es CAPS y qué le entrega HTG. Solo overview: el código aún no está disponible.",
+                                         "documentIds":  [
+                                                             "caps-overview"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué es CAPS?",
+                                                                    "¿Qué procesa CAPS que HTG no duplica?",
+                                                                    "¿Cómo le envía timecards HTG a CAPS?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Overview",
+                                                    "goal":  "Understand what CAPS is and what HTG delivers to it. Overview only: the code is not available yet.",
+                                                    "suggestedQuestions":  [
+                                                                               "What is CAPS?",
+                                                                               "What does CAPS process that HTG does not duplicate?",
+                                                                               "How does HTG send timecards to CAPS?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  2,
+                                         "key":  "access",
+                                         "title":  "Accesos",
+                                         "goal":  "Pedir acceso a CAPS: qué ticket crear y a quién.",
+                                         "documentIds":  [
+                                                             "confluence-caps-access"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo pido acceso a CAPS?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Access",
+                                                    "goal":  "Request access to CAPS: which ticket to create and who to ask.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I request access to CAPS?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  3,
+                                         "key":  "local-setup",
+                                         "title":  "Configurar y probar en local",
+                                         "goal":  "Ejecutar y probar CAPS en local. Sin acceso al código por ahora.",
+                                         "documentIds":  [
+                                                             "confluence-caps-local-setup"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Cómo ejecuto CAPS en local?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "Set up and test locally",
+                                                    "goal":  "Run and test CAPS locally. No access to the code for now.",
+                                                    "suggestedQuestions":  [
+                                                                               "How do I run CAPS locally?"
+                                                                           ]
+                                                }
+                                     },
+                                     {
+                                         "step":  4,
+                                         "key":  "domain-questions",
+                                         "title":  "Preguntas de CAPS",
+                                         "goal":  "Preguntas sobre lo que HTG documenta de CAPS; el chat acepta cualquier otra.",
+                                         "documentIds":  [
+                                                             "caps-overview"
+                                                         ],
+                                         "suggestedQuestions":  [
+                                                                    "¿Qué topics de Kafka conectan HTG con CAPS?",
+                                                                    "¿Qué validaciones de impuestos hace CAPS?"
+                                                                ],
+                                         "en":  {
+                                                    "title":  "CAPS questions",
+                                                    "goal":  "Questions about what HTG documents about CAPS; the chat accepts any other.",
+                                                    "suggestedQuestions":  [
+                                                                               "Which Kafka topics connect HTG with CAPS?",
+                                                                               "Which tax validations does CAPS run?"
+                                                                           ]
+                                                }
+                                     }
+                                 ]
+                   }
+               ]
 }

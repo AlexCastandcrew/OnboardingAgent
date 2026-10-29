@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\OnboardingAgent.Core\OnboardingAgent.Core.csproj" />
+    <ProjectReference Include="..\..\src\OnboardingAgent.ExternalApi.Atlassian\OnboardingAgent.ExternalApi.Atlassian.csproj" />
   </ItemGroup>
 
   <ItemGroup>

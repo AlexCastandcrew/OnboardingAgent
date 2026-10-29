@@ -67,3 +67,24 @@ function Test-ApiHealth([string]$BaseUrl) {
         $null
     }
 }
+
+# The Atlassian API token is stored like the Bedrock key: encrypted with Windows DPAPI, never in plain text.
+$script:AtlassianTokenFile = Join-Path $env:LOCALAPPDATA 'OnboardingAgent\atlassian-api-token.txt'
+
+function Save-AtlassianToken([securestring]$Token, [string]$Path = $script:AtlassianTokenFile) {
+    New-Item -ItemType Directory -Force (Split-Path $Path) | Out-Null
+    [IO.File]::WriteAllText($Path, (ConvertFrom-SecureString $Token))
+}
+
+# Returns the decrypted token, or $null when none is stored. Callers pass it only to the API process.
+function Get-AtlassianToken([string]$Path = $script:AtlassianTokenFile) {
+    if (-not (Test-Path $Path)) { return $null }
+    try {
+        $secure = ConvertTo-SecureString ([IO.File]::ReadAllText($Path).Trim()) -ErrorAction Stop
+    }
+    catch {
+        throw "Cannot decrypt '$Path'. It was saved by another Windows user or machine; run ./scripts/set-atlassian.ps1 again."
+    }
+
+    return [System.Net.NetworkCredential]::new('', $secure).Password
+}

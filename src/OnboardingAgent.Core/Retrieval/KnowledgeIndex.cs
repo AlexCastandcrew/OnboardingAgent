@@ -89,6 +89,22 @@ public sealed class KnowledgeIndex
         return connection;
     }
 
+    /// <summary>Every project that has at least one indexed document.</summary>
+    public IReadOnlyList<string> GetProjectIds()
+    {
+        using var connection = Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT DISTINCT project_id FROM documents";
+        using var reader = command.ExecuteReader();
+        var result = new List<string>();
+        while (reader.Read())
+        {
+            result.Add(reader.GetString(0));
+        }
+
+        return result;
+    }
+
     public Dictionary<string, string> GetChecksums(string projectId)
     {
         using var connection = Open();
