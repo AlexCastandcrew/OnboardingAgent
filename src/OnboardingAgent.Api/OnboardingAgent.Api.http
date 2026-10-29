@@ -1,0 +1,37 @@
+@host = http://localhost:5006
+
+GET {{host}}/api/health
+
+###
+
+GET {{host}}/api/projects
+
+###
+
+GET {{host}}/api/projects/htg/domains
+
+###
+
+GET {{host}}/api/onboarding/htg/developer?domain=silverwing&initiative=H2G-6893
+
+###
+
+POST {{host}}/api/chat
+Content-Type: application/json
+
+{
+  "projectId": "htg",
+  "domain": "silverwing",
+  "initiative": "H2G-6893",
+  "role": "developer",
+  "message": "¿Qué equipos tiene HTG y en qué trabaja Silverwing?",
+  "history": []
+}
+
+###
+
+GET {{host}}/api/documents/teams
+
+###
+
+POST {{host}}/api/admin/reindex

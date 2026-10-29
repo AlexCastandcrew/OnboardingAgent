@@ -1,0 +1,118 @@
+{
+  "startedAt": "2026-10-29T00:58:08.0580757+00:00",
+  "baseUrl": "http://localhost:5006",
+  "runs": [
+    {
+      "run": 1,
+      "cases": [
+        {
+          "caseId": "dev-2",
+          "category": "developer",
+          "passed": true,
+          "reasons": [],
+          "fabricatedCitation": false,
+          "httpStatus": 200,
+          "evidenceStatus": "partial",
+          "citedDocumentIds": [
+            "repo-excelmapping-code",
+            "repo-excelmapping-design-7382"
+          ],
+          "elapsedMs": 11816,
+          "answer": "Seg\u00FAn la documentaci\u00F3n disponible (parcial), el mapeo funciona as\u00ED:\n- \u0060BasePropertyMapping.MapAsync\u0060 copia las columnas extra\u00EDdas a los campos de \u0060TimecardDistribution\u0060, por ejemplo OccupationCode, CostCodeDescription, EstimatedGross, CPJN, Notes y TK2\u2013TK10 [S1].\n- WorkStartDate, WorkEndDate y TK1 (CostCode) pueden ser sustituidos por valores est\u00E1ticos del usuario [S2].\n- \u0060PayTypeOverrideExtractionMapping\u0060 usa los mappings del template para localizar la columna del pay type override [S3] y toma su valor mediante accessors [S4].\n- La extracci\u00F3n devuelve timecards que luego consumen los mappers existentes [S5].\n\nFalta documentaci\u00F3n sobre el mapeo espec\u00EDfico de H2G-6893 (Executive Officer Payroll); consulte al equipo de Excel Mapping.",
+          "expectedFacts": [
+            "How Excel columns are mapped to HTG fields"
+          ],
+          "needsCorpus": true
+        },
+        {
+          "caseId": "qa-2",
+          "category": "qa",
+          "passed": true,
+          "reasons": [],
+          "fabricatedCitation": false,
+          "httpStatus": 200,
+          "evidenceStatus": "partial",
+          "citedDocumentIds": [
+            "repo-excelmapping-design-7273",
+            "jira-h2g-7273"
+          ],
+          "elapsedMs": 16264,
+          "answer": "Las fuentes no traen un plan de pruebas, solo objetivos de los que se pueden derivar verificaciones (parcial):\n- Todo valor EO de la extracci\u00F3n llega a CAPS en un campo utilizable [S2].\n- Un override en cero y un override ausente deben distinguirse en el mensaje [S2].\n- Cubre campos de la hoja (fechas del per\u00EDodo, frecuencia, \u0060PaymentTerm\u0060, \u0060ZeroNetCheck\u0060) y timecards por persona con tipos de pago como GROSS WAGES y TAX OVERRIDE [S3].\n- No pruebes aqu\u00ED: validaciones de CAPS, plantilla EO, extracci\u00F3n UN ni herramienta de escritorio remoto [S4]. El zero-net check no se transporta [S2].\n\nFaltan criterios de aceptaci\u00F3n; los requisitos est\u00E1n en la p\u00E1gina de Confluence \u0022Executive Officers (EO) AI Automation\u0022 [S3].",
+          "expectedFacts": [
+            "Scenarios or acceptance criteria to test the Excel import"
+          ],
+          "needsCorpus": true
+        },
+        {
+          "caseId": "followup-2",
+          "category": "followUp",
+          "passed": true,
+          "reasons": [],
+          "fabricatedCitation": false,
+          "httpStatus": 200,
+          "evidenceStatus": "supported",
+          "citedDocumentIds": [
+            "jira-h2g-7165",
+            "repo-excelmapping-design-7165"
+          ],
+          "elapsedMs": 14367,
+          "answer": "Se refiere a H2G-7165 (estado \u0022Ready for UAT\u0022) [S1]. Cambia la pantalla AI Data: antes mostraba las respuestas de extracci\u00F3n de una cach\u00E9 temporal en Redis, y ahora recupera el mensaje original de Kafka con el topic, la partition y el offset registrados en los logs cuando el mapper lo recibi\u00F3 [S2]. Redis ya no guarda esas respuestas [S3].\n\nDetalles t\u00E9cnicos:\n- La lista cubre los \u00FAltimos 14 d\u00EDas y muestra como fila propia un archivo cuya extracci\u00F3n fall\u00F3 [S2].\n- Los logs de la API llevan el prefijo \u0060[AIData]\u0060 y nunca registran el payload [S4].\n- Tras el despliegue, verifica que no se creen claves \u0060ai_response_\u0060 en Redis [S4].",
+          "expectedFacts": [
+            "Resolves \u0027the last one\u0027 to H2G-7165 and describes its change"
+          ],
+          "needsCorpus": true
+        }
+      ],
+      "gates": [
+        {
+          "name": "Role questions answered with support",
+          "passed": true,
+          "detail": "2 of 2 passed; 2 required."
+        },
+        {
+          "name": "Questions without evidence are recognized",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Follow-ups resolve the reference",
+          "passed": true,
+          "detail": "1 of 1 passed."
+        },
+        {
+          "name": "Exact identifier finds its source",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Instructions inside a document are ignored",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Zero invented citations; every cited document opens",
+          "passed": true,
+          "detail": "None."
+        },
+        {
+          "name": "A Spanish question finds its English source",
+          "passed": true,
+          "detail": "Passed: dev-2, qa-2, followup-2."
+        },
+        {
+          "name": "Answers within 15 s",
+          "passed": false,
+          "detail": "2 of 3 answered queries within target; 3 required, at least 10 queries."
+        }
+      ],
+      "medianMs": 14367,
+      "maxMs": 16264,
+      "passed": false
+    }
+  ],
+  "consecutiveRuns": {
+    "name": "Two consecutive full runs pass",
+    "passed": false,
+    "detail": "0 consecutive passing run(s) of 1."
+  }
+}

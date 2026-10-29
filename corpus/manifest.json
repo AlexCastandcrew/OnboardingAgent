@@ -1,0 +1,203 @@
+{
+    "projectId":  "htg",
+    "documents":  [
+                      {
+                          "documentId":  "teams",
+                          "path":  "teams.md",
+                          "title":  "HTG teams and initiatives",
+                          "sourceType":  "manual",
+                          "sourceUrl":  null,
+                          "sourceVersion":  "snapshot-2026-10-27",
+                          "sourceUpdatedAt":  "2026-10-27",
+                          "domains":  [
+                                          "general",
+                                          "rhaegal",
+                                          "vhagar",
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "synthetic-release-freeze",
+                          "path":  "synthetic/release-freeze.md",
+                          "title":  "Release freeze calendar (synthetic test document)",
+                          "sourceType":  "synthetic",
+                          "sourceUrl":  null,
+                          "sourceVersion":  "synthetic-01",
+                          "sourceUpdatedAt":  null,
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-excelmapping-design-7273",
+                          "path":  "repo/repo-excelmapping-design-7273.md",
+                          "title":  "H2G-7273 — Executive Officer timecard import — Design (typed tax override and two timecard fields)",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7273-eo-timecard-import-design.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-excelmapping-design-7382",
+                          "path":  "repo/repo-excelmapping-design-7382.md",
+                          "title":  "H2G-7382 — Traditional extraction inside htg-server — Design (direct in-process extractor)",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7382-traditional-extraction-in-process-design.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-excelmapping-design-7266",
+                          "path":  "repo/repo-excelmapping-design-7266.md",
+                          "title":  "H2G-7266 — Data Extract screen: Traditional worksheets — Design (source descriptors)",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7266-data-extract-traditional-design.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-excelmapping-design-7165",
+                          "path":  "repo/repo-excelmapping-design-7165.md",
+                          "title":  "H2G-7165 — AI Data from Kafka — Design (log-resolved read)",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7165-ai-data-from-kafka-design.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-excelmapping-design-7060",
+                          "path":  "repo/repo-excelmapping-design-7060.md",
+                          "title":  "H2G-7060 — Process File Tracking Dashboard — Filters, Names, Errors and Links — Design",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7060-process-file-tracking-dashboard-design.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-7273",
+                          "path":  "jira/jira-h2g-7273.md",
+                          "title":  "H2G-7273 Excel import: Support Executive Officers JSON and pass to CAPS",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-7273",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-7382",
+                          "path":  "jira/jira-h2g-7382.md",
+                          "title":  "H2G-7382 Extract Traditional timecard data inside htg-server",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-7382",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-10-27",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-7266",
+                          "path":  "jira/jira-h2g-7266.md",
+                          "title":  "H2G-7266 Data Extract page: Traditional extract data and rename AI Data",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-7266",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-10-27",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-7165",
+                          "path":  "jira/jira-h2g-7165.md",
+                          "title":  "H2G-7165 AI Data: read AI extraction responses from Kafka instead of Redis",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-7165",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-10-27",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-7060",
+                          "path":  "jira/jira-h2g-7060.md",
+                          "title":  "H2G-7060 Excel import: Process File Tracking Dashboard Improvements",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-7060",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-10-26",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-excelmapping-code",
+                          "path":  "code/repo-excelmapping-code.md",
+                          "title":  "ExcelMapping code examples (path, commit and lines)",
+                          "sourceType":  "repo",
+                          "sourceUrl":  null,
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6893"
+                                          ]
+                      }
+                  ]
+}

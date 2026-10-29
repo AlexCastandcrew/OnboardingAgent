@@ -1,0 +1,115 @@
+{
+  "startedAt": "2026-10-29T00:59:58.3248389+00:00",
+  "baseUrl": "http://localhost:5006",
+  "runs": [
+    {
+      "run": 1,
+      "cases": [
+        {
+          "caseId": "dev-2",
+          "category": "developer",
+          "passed": false,
+          "reasons": [
+            "HTTP 502: {\u0022type\u0022:\u0022https://tools.ietf.org/html/rfc9110#section-15.6.3\u0022,\u0022title\u0022:\u0022The model could not answer. Try again.\u0022,\u0022status\u0022:502,\u0022detail\u0022:\u0022The model service returned an error (ValidationException).\u0022,\u0022traceId\u0022:\u002200-2dcd14dded322e3f582e82f879cf7f12-4b02e3b7ddf9e1e9-00\u0022}"
+          ],
+          "fabricatedCitation": false,
+          "httpStatus": 502,
+          "evidenceStatus": null,
+          "citedDocumentIds": [],
+          "elapsedMs": 7336,
+          "answer": null,
+          "expectedFacts": [
+            "How Excel columns are mapped to HTG fields"
+          ],
+          "needsCorpus": true
+        },
+        {
+          "caseId": "qa-2",
+          "category": "qa",
+          "passed": false,
+          "reasons": [
+            "HTTP 502: {\u0022type\u0022:\u0022https://tools.ietf.org/html/rfc9110#section-15.6.3\u0022,\u0022title\u0022:\u0022The model could not answer. Try again.\u0022,\u0022status\u0022:502,\u0022detail\u0022:\u0022The model service returned an error (ValidationException).\u0022,\u0022traceId\u0022:\u002200-1fcdb07c8c5684ec809c2d81a6a0db7c-4cb53fc158c85e73-00\u0022}"
+          ],
+          "fabricatedCitation": false,
+          "httpStatus": 502,
+          "evidenceStatus": null,
+          "citedDocumentIds": [],
+          "elapsedMs": 5770,
+          "answer": null,
+          "expectedFacts": [
+            "Scenarios or acceptance criteria to test the Excel import"
+          ],
+          "needsCorpus": true
+        },
+        {
+          "caseId": "followup-2",
+          "category": "followUp",
+          "passed": false,
+          "reasons": [
+            "HTTP 502: {\u0022type\u0022:\u0022https://tools.ietf.org/html/rfc9110#section-15.6.3\u0022,\u0022title\u0022:\u0022The model could not answer. Try again.\u0022,\u0022status\u0022:502,\u0022detail\u0022:\u0022The model service returned an error (ValidationException).\u0022,\u0022traceId\u0022:\u002200-fa2417e26b9287476267e62d395d8b37-4d7d85497f11c689-00\u0022}"
+          ],
+          "fabricatedCitation": false,
+          "httpStatus": 502,
+          "evidenceStatus": null,
+          "citedDocumentIds": [],
+          "elapsedMs": 5831,
+          "answer": null,
+          "expectedFacts": [
+            "Resolves \u0027the last one\u0027 to H2G-7165 and describes its change"
+          ],
+          "needsCorpus": true
+        }
+      ],
+      "gates": [
+        {
+          "name": "Role questions answered with support",
+          "passed": false,
+          "detail": "0 of 2 passed; 2 required."
+        },
+        {
+          "name": "Questions without evidence are recognized",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Follow-ups resolve the reference",
+          "passed": false,
+          "detail": "0 of 1 passed."
+        },
+        {
+          "name": "Exact identifier finds its source",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Instructions inside a document are ignored",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Zero invented citations; every cited document opens",
+          "passed": true,
+          "detail": "None."
+        },
+        {
+          "name": "A Spanish question finds its English source",
+          "passed": false,
+          "detail": "No Spanish case with expected documents passed."
+        },
+        {
+          "name": "Answers within 15 s",
+          "passed": false,
+          "detail": "0 of 0 answered queries within target; 0 required, at least 10 queries."
+        }
+      ],
+      "medianMs": 0,
+      "maxMs": 0,
+      "passed": false
+    }
+  ],
+  "consecutiveRuns": {
+    "name": "Two consecutive full runs pass",
+    "passed": false,
+    "detail": "0 consecutive passing run(s) of 1."
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "_comment": "Applied by scripts/import-repo-docs.ps1 after each import. Plan section 11: no person names or emails in the corpus. Each 'find' must match exactly; if the source changes and it no longer matches, the import fails so the data is not let through silently.",
+  "redactions": [
+    {
+      "documentId": "repo-daily-workflow",
+      "find": "— **Quynh Vo** posts updated fix versions there whenever they change.",
+      "replace": "— updated fix versions are posted there whenever they change.",
+      "reason": "Person name; the fact is kept without it."
+    },
+    {
+      "documentId": "repo-daily-workflow",
+      "find": "watch HTG Daily Scrum channel (Quynh Vo posts updates)",
+      "replace": "watch HTG Daily Scrum channel (updates are posted there)",
+      "reason": "Person name."
+    },
+    {
+      "documentId": "repo-excelmapping-design-7060",
+      "find": "(\"frank\" finds `frank.rivera@…`)",
+      "replace": "(\"jane\" finds `jane.doe@…`)",
+      "reason": "Real first name and partial email in an example; replaced with a synthetic one."
+    },
+    {
+      "documentId": "repo-excelmapping-design-7060",
+      "find": "| \"frank\" finds nothing. |",
+      "replace": "| \"jane\" finds nothing. |",
+      "reason": "Same example."
+    },
+    {
+      "documentId": "repo-excelmapping-design-7060",
+      "find": "Search \"frank\" in Uploaded By",
+      "replace": "Search part of your user name in Uploaded By",
+      "reason": "Same example."
+    },
+    {
+      "documentId": "repo-readme",
+      "find": "Send an email to [DevOps](mailto:devopstickets@CastandCrew.com) (devopstickets@CastandCrew.com)",
+      "replace": "Send an email to the DevOps tickets mailbox (address in the htg-server README)",
+      "reason": "Email address (team mailbox); the plan keeps no emails in the corpus."
+    }
+  ]
+}

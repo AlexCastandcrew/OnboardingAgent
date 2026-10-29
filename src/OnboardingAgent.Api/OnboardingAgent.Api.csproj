@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <UserSecretsId>onboarding-agent-api</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnboardingAgent.Core\OnboardingAgent.Core.csproj" />
+    <ProjectReference Include="..\OnboardingAgent.ExternalApi.Bedrock\OnboardingAgent.ExternalApi.Bedrock.csproj" />
+  </ItemGroup>
+
+</Project>

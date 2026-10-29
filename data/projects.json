@@ -1,0 +1,43 @@
+{
+  "projects": [
+    {
+      "projectId": "htg",
+      "name": "HTG",
+      "description": "HTGPlus: plataforma de timecards, payroll y onboarding de Cast & Crew.",
+      "repoUrl": "https://github.com/cast-and-crew/htg-server",
+      "snapshotDate": "2026-10-27",
+      "domains": [
+        {
+          "domainId": "rhaegal",
+          "name": "Rhaegal",
+          "depth": "overview",
+          "initiatives": [
+            { "initiativeId": "H2G-6994", "name": "YEP" },
+            { "initiativeId": "H2G-7016", "name": "Onboarding Documents Dashboard Fase 2" },
+            { "initiativeId": "H2G-6371", "name": "Convert Account Code" },
+            { "initiativeId": "H2G-7146", "name": "Run the Business" }
+          ]
+        },
+        {
+          "domainId": "vhagar",
+          "name": "Vhagar",
+          "depth": "overview",
+          "initiatives": [
+            { "initiativeId": "H2G-5928", "name": "Timecard Splits" },
+            { "initiativeId": "H2G-6854", "name": "DGA Scale Rates y Production Feed a Start+" },
+            { "initiativeId": "H2G-7150", "name": "Employee Setup Domain Boundary" }
+          ]
+        },
+        {
+          "domainId": "silverwing",
+          "name": "Silverwing",
+          "depth": "full",
+          "initiatives": [
+            { "initiativeId": "H2G-6627", "name": "Onboarding Documents Fase 1" },
+            { "initiativeId": "H2G-6893", "name": "Excel Import: Executive Officer Payroll" }
+          ]
+        }
+      ]
+    }
+  ]
+}

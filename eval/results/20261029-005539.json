@@ -1,0 +1,118 @@
+{
+  "startedAt": "2026-10-29T00:55:39.2444274+00:00",
+  "baseUrl": "http://localhost:5006",
+  "runs": [
+    {
+      "run": 1,
+      "cases": [
+        {
+          "caseId": "dev-2",
+          "category": "developer",
+          "passed": true,
+          "reasons": [],
+          "fabricatedCitation": false,
+          "httpStatus": 200,
+          "evidenceStatus": "partial",
+          "citedDocumentIds": [
+            "repo-excelmapping-code"
+          ],
+          "elapsedMs": 17687,
+          "answer": "Los fuentes cubren solo parte del mapeo (no hay una descripci\u00F3n general de todas las columnas).\n\n- \u0060BasePropertyMapping.MapAsync\u0060 copia los valores extra\u00EDdos (\u0060context.TimecardDistribution\u0060) a los campos de \u0060TimecardDistribution\u0060: ocupaci\u00F3n, descripci\u00F3n del cost code, \u0060PayTypeOverride\u0060, \u0060EstimatedGross\u0060, \u0060DeductionOverride\u0060, warnings, CPJN, notas y TK2\u2013TK10 [S2]. Est\u00E1 en \u0060HTGPlus.ExcelMapping/DataIngestionMapping/Mappers/BasePropertyMapping.cs\u0060, l\u00EDneas 18-70, commit \u0060e570f4474d\u0060 [S2].\n- El usuario puede sobrescribir con columnas est\u00E1ticas \u0060WorkStartDate\u0060, \u0060WorkEndDate\u0060 y \u0060CostCode\u0060 (TK1) [S1]. Si solo hay una fecha est\u00E1tica, se usa para ambas [S1].\n- \u0060RateOverride\u0060 se copia elemento por elemento (\u0060Type\u0060, \u0060Value\u0060) [S1].\n- \u0060PayTypeOverrideExtractionMapping\u0060 busca en \u0060templateInfo.Mappings\u0060 la columna de la plantilla mapeada a \u0060PayTypeOverride\u0060 y luego aplica su valor con accessors [S3].\n\nFalta: la lista de los dem\u00E1s mappers y la configuraci\u00F3n de plantillas para H2G-6893.",
+          "expectedFacts": [
+            "How Excel columns are mapped to HTG fields"
+          ],
+          "needsCorpus": true
+        },
+        {
+          "caseId": "qa-2",
+          "category": "qa",
+          "passed": true,
+          "reasons": [],
+          "fabricatedCitation": false,
+          "httpStatus": 200,
+          "evidenceStatus": "partial",
+          "citedDocumentIds": [
+            "jira-h2g-7060",
+            "jira-h2g-7273",
+            "repo-excelmapping-design-7273"
+          ],
+          "elapsedMs": 15303,
+          "answer": "La documentaci\u00F3n no incluye un plan de pruebas completo, pero hay escenarios que se pueden derivar de las fuentes (evidencia **parcial**):\n\n**EO (H2G-7273)**\n- Verificar que cada valor de la extracci\u00F3n EO llegue a CAPS en un campo que CAPS pueda procesar [S3].\n- Comprobar que un override de cero y un override ausente se distinguen en el mensaje [S3].\n- Revisar los campos de la hoja: fechas del per\u00EDodo, frecuencia, \u0060PaymentTerm\u0060, \u0060ZeroNetCheck\u0060, y por persona bruto estimado, deducciones y distribuciones (GROSS WAGES, TAX OVERRIDE) [S2].\n- \u0060ZeroNetCheck\u0060 no se transmite [S3].\n\n**Dashboard (H2G-7060)**\n- Los filtros deben mostrar el estado m\u00E1s reciente; \u0022Uploaded By\u0022 debe aceptar valores parciales; debe existir la columna Project [S1].\n- Los archivos con estado Error deben mostrar el error real, y los enlaces de Package Tracking ID y del archivo deben funcionar [S1].\n\n**Falta:** casos de prueba formales y criterios de aceptaci\u00F3n. Las validaciones de CAPS est\u00E1n fuera de alcance [S6]. Consulte la p\u00E1gina de Confluence \u0022Executive Officers (EO) AI Automation\u0022 [S2].",
+          "expectedFacts": [
+            "Scenarios or acceptance criteria to test the Excel import"
+          ],
+          "needsCorpus": true
+        },
+        {
+          "caseId": "followup-2",
+          "category": "followUp",
+          "passed": true,
+          "reasons": [],
+          "fabricatedCitation": false,
+          "httpStatus": 200,
+          "evidenceStatus": "supported",
+          "citedDocumentIds": [
+            "jira-h2g-7165",
+            "repo-excelmapping-design-7165"
+          ],
+          "elapsedMs": 15935,
+          "answer": "El \u00FAltimo que mencion\u00E9 fue H2G-7165 (estado \u0022Ready for UAT\u0022) [S2]. Cambia el origen de datos de la pantalla AI Data:\n\n- Antes le\u00EDa las respuestas de extracci\u00F3n de un cach\u00E9 temporal en Redis; ahora las lee de Kafka [S1][S3].\n- Recupera el mensaje original del topic de extracci\u00F3n Unstructured con el topic, partition y offset registrados en los logs del mapper [S1].\n- Redis ya no guarda respuestas de extracci\u00F3n de IA [S1].\n- La lista cubre los \u00FAltimos 14 d\u00EDas (retenci\u00F3n del topic) y un archivo con extracci\u00F3n fallida aparece como fila propia [S1].\n- Los logs de la API usan el prefijo \u0060[AIData]\u0060 y nunca registran el payload [S4].\n- Para verificar tras el despliegue, confirma que no se crean claves \u0060ai_response_\u0060 en Redis [S4].\n\nFuera de alcance: worksheets Traditional (H2G-7266), paginaci\u00F3n m\u00E1s all\u00E1 de 100 (H2G-6906) y DocAI [S1].",
+          "expectedFacts": [
+            "Resolves \u0027the last one\u0027 to H2G-7165 and describes its change"
+          ],
+          "needsCorpus": true
+        }
+      ],
+      "gates": [
+        {
+          "name": "Role questions answered with support",
+          "passed": true,
+          "detail": "2 of 2 passed; 2 required."
+        },
+        {
+          "name": "Questions without evidence are recognized",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Follow-ups resolve the reference",
+          "passed": true,
+          "detail": "1 of 1 passed."
+        },
+        {
+          "name": "Exact identifier finds its source",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Instructions inside a document are ignored",
+          "passed": false,
+          "detail": "0 of 0 passed."
+        },
+        {
+          "name": "Zero invented citations; every cited document opens",
+          "passed": true,
+          "detail": "None."
+        },
+        {
+          "name": "A Spanish question finds its English source",
+          "passed": true,
+          "detail": "Passed: dev-2, qa-2, followup-2."
+        },
+        {
+          "name": "Answers within 15 s",
+          "passed": false,
+          "detail": "0 of 3 answered queries within target; 3 required, at least 10 queries."
+        }
+      ],
+      "medianMs": 15935,
+      "maxMs": 17687,
+      "passed": false
+    }
+  ],
+  "consecutiveRuns": {
+    "name": "Two consecutive full runs pass",
+    "passed": false,
+    "detail": "0 consecutive passing run(s) of 1."
+  }
+}

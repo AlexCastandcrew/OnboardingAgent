@@ -1,0 +1,28 @@
+{
+  "_comment": "htg-server documents imported by scripts/import-repo-docs.ps1. Ids match data/onboarding.json. CLAUDE.md files, prompts and configuration are left out on purpose.",
+  "repoUrl": "https://github.com/cast-and-crew/htg-server",
+  "documents": [
+    { "documentId": "repo-readme", "path": "README.md", "domains": [ "general" ] },
+    { "documentId": "repo-handbook-readme", "path": "HTGPlus.Handbook/README.md", "domains": [ "general" ] },
+    { "documentId": "repo-daily-workflow", "path": "HTGPlus.Handbook/DAILY_WORKFLOW.md", "domains": [ "general" ] },
+    { "documentId": "repo-frontend-standards", "path": "HTGPlus.Handbook/FRONTEND_STANDARDS.md", "domains": [ "general" ] },
+    { "documentId": "repo-fix-version-convention", "path": "HTGPlus.Handbook/FIX_VERSION_CONVENTION.md", "domains": [ "general" ] },
+    { "documentId": "repo-active-fix-versions", "path": "HTGPlus.Handbook/ACTIVE_FIX_VERSIONS.md", "domains": [ "general" ] },
+    { "documentId": "repo-db-scripts", "path": "HTGPlus.Handbook/DB_SCRIPTS.md", "domains": [ "general" ] },
+    { "documentId": "repo-metrics-tracking", "path": "HTGPlus.Handbook/METRICS_TRACKING.md", "domains": [ "general" ] },
+    { "documentId": "repo-design-document-guide", "path": "HTGPlus.Handbook/DESIGN_DOCUMENT_GUIDE.md", "domains": [ "general" ] },
+    { "documentId": "repo-module-inventory", "path": "HTGPlus.Handbook/MODULE_INVENTORY.md", "domains": [ "general" ] },
+    { "documentId": "repo-architecture-migration", "path": "HTGPlus.Handbook/ARCHITECTURE_MIGRATION.md", "domains": [ "general" ] },
+    { "documentId": "repo-kafka-readme", "path": "HTGPlus.Kafka/README.md", "domains": [ "general" ] },
+    { "documentId": "repo-objectcache-readme", "path": "HTGPlus.ObjectCache/README.md", "domains": [ "general" ] },
+    { "documentId": "repo-external-api-design", "path": "HTGPlus.ExternalApi/docs/external-api-design.md", "domains": [ "general" ] },
+    { "documentId": "repo-excelmapping-design-7273", "path": "HTGPlus.ExcelMapping/doc/H2G-7273-eo-timecard-import-design.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6893" ] },
+    { "documentId": "repo-excelmapping-design-7382", "path": "HTGPlus.ExcelMapping/doc/H2G-7382-traditional-extraction-in-process-design.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6893" ] },
+    { "documentId": "repo-excelmapping-design-7266", "path": "HTGPlus.ExcelMapping/doc/H2G-7266-data-extract-traditional-design.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6893" ] },
+    { "documentId": "repo-excelmapping-design-7165", "path": "HTGPlus.ExcelMapping/doc/H2G-7165-ai-data-from-kafka-design.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6893" ] },
+    { "documentId": "repo-excelmapping-design-7060", "path": "HTGPlus.ExcelMapping/doc/H2G-7060-process-file-tracking-dashboard-design.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6893" ] },
+    { "documentId": "repo-onboarding-lookup-fallback", "path": "docs/onboarding/DESIGN_OnboardingLookupFallback.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6627" ] },
+    { "documentId": "repo-onboarding-package-linkage", "path": "docs/onboarding/DESIGN_OnboardingPackageLinkage.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6627" ] },
+    { "documentId": "repo-onboarding-w4-persistence", "path": "docs/onboarding/DESIGN_OnboardingW4Persistence.md", "domains": [ "silverwing" ], "initiatives": [ "H2G-6627" ] }
+  ]
+}

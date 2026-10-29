@@ -1,0 +1,95 @@
+﻿{
+    "answerId":  "3ed6a41f-1ecc-4d84-a0c6-7176357d4523",
+    "answer":  "H2G-7165 changes where the AI Data admin screen gets its data. It now reads the extraction response of a processed worksheet from the Kafka extract topics instead of Redis [S1]. Redis no longer holds AI extraction responses [S1].\n\nOther details for developers:\n- Opening a detail is one search and one single-message read. The list is one paged search, and its cost does not grow with stored responses [S2].\n- The API logs list and detail with package tracking id, worksheet, topic, partition, offset and result (found, expired, unavailable), prefixed `[AIData]` [S3].\n- The payload holds employee data and is never logged [S3].\n- To verify after deploy, process an Unstructured file, open its worksheets, and confirm no `ai_response_` keys are created in Redis [S3].",
+    "evidenceStatus":  "supported",
+    "sources":  [
+                    {
+                        "id":  "S1",
+                        "documentId":  "repo-excelmapping-design-7165",
+                        "chunkId":  "repo-excelmapping-design-7165#0",
+                        "title":  "H2G-7165 — AI Data from Kafka — Design (log-resolved read)",
+                        "url":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7165-ai-data-from-kafka-design.md",
+                        "section":  "AI Data from Kafka — Design (log-resolved read)",
+                        "excerpt":  "Scope: the AI Data admin screen reads the extraction response of a processed worksheet from the Kafka extract topics instead of\nRedis. Redis no longer holds AI extraction responses.\n\n---",
+                        "sourceType":  "repo",
+                        "sourceVersion":  "e570f4474d",
+                        "sourceUpdatedAt":  "2026-10-28"
+                    },
+                    {
+                        "id":  "S2",
+                        "documentId":  "repo-excelmapping-design-7165",
+                        "chunkId":  "repo-excelmapping-design-7165#11",
+                        "title":  "H2G-7165 — AI Data from Kafka — Design (log-resolved read)",
+                        "url":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7165-ai-data-from-kafka-design.md",
+                        "section":  "AI Data from Kafka — Design (log-resolved read) \u003e 6. Scale",
+                        "excerpt":  "Admin-only screen, low volume. A detail open is one search and one single-message read. The list is one paged search; its cost\ndoes not grow with stored responses.",
+                        "sourceType":  "repo",
+                        "sourceVersion":  "e570f4474d",
+                        "sourceUpdatedAt":  "2026-10-28"
+                    },
+                    {
+                        "id":  "S3",
+                        "documentId":  "repo-excelmapping-design-7165",
+                        "chunkId":  "repo-excelmapping-design-7165#12",
+                        "title":  "H2G-7165 — AI Data from Kafka — Design (log-resolved read)",
+                        "url":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExcelMapping/doc/H2G-7165-ai-data-from-kafka-design.md",
+                        "section":  "AI Data from Kafka — Design (log-resolved read) \u003e 7. Observability",
+                        "excerpt":  "- API logs list and detail with package tracking id, worksheet, topic, partition, offset and the result (found, expired,\n  unavailable), prefixed `[AIData]`.\n- The payload holds employee data; it is never logged.\n- Verify after deploy: process an Unstructured file, open its worksheets, and confirm no `ai_response_` keys are created in\n  Redis for it.",
+                        "sourceType":  "repo",
+                        "sourceVersion":  "e570f4474d",
+                        "sourceUpdatedAt":  "2026-10-28"
+                    }
+                ],
+    "claims":  [
+                   {
+                       "text":  "The AI Data admin screen reads extraction responses from Kafka extract topics instead of Redis.",
+                       "sourceIds":  [
+                                         "S1"
+                                     ]
+                   },
+                   {
+                       "text":  "Redis no longer holds AI extraction responses.",
+                       "sourceIds":  [
+                                         "S1"
+                                     ]
+                   },
+                   {
+                       "text":  "A detail open is one search plus one single-message read.",
+                       "sourceIds":  [
+                                         "S2"
+                                     ]
+                   },
+                   {
+                       "text":  "The list is one paged search whose cost does not grow with stored responses.",
+                       "sourceIds":  [
+                                         "S2"
+                                     ]
+                   },
+                   {
+                       "text":  "API logs list and detail with tracking id, worksheet, topic, partition, offset and result, prefixed [AIData].",
+                       "sourceIds":  [
+                                         "S3"
+                                     ]
+                   },
+                   {
+                       "text":  "The payload holds employee data and is never logged.",
+                       "sourceIds":  [
+                                         "S3"
+                                     ]
+                   },
+                   {
+                       "text":  "After deploy, confirm no ai_response_ keys are created in Redis for a processed Unstructured file.",
+                       "sourceIds":  [
+                                         "S3"
+                                     ]
+                   }
+               ],
+    "diagnostics":  {
+                        "searchQuery":  "What does H2G-7165 change in the AI Data screen?",
+                        "candidateCount":  20,
+                        "contextCount":  3,
+                        "reranked":  true,
+                        "generationAttempts":  1,
+                        "elapsedMs":  11756
+                    }
+}

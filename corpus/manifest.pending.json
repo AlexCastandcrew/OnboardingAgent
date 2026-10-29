@@ -1,0 +1,335 @@
+{
+    "projectId":  "htg",
+    "documents":  [
+                      {
+                          "documentId":  "jira-h2g-6493",
+                          "path":  "jira/jira-h2g-6493.md",
+                          "title":  "H2G-6493 Design: Onboarding Import Service Architecture and Data Flow",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-6493",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-09-25",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-6389",
+                          "path":  "jira/jira-h2g-6389.md",
+                          "title":  "H2G-6389 Onboarding Data Extract: JSON Contract and Import Service for Employees and Deal Memos",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-6389",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-09-25",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-6838",
+                          "path":  "jira/jira-h2g-6838.md",
+                          "title":  "H2G-6838 Technical design: Onboarding Mapping Service (ExternalDataMapper)",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-6838",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-10-10",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-6776",
+                          "path":  "jira/jira-h2g-6776.md",
+                          "title":  "H2G-6776 Onboarding Mapping Service: AI-extracted onboarding data to Employee records",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-6776",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-10-10",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "jira-h2g-6532",
+                          "path":  "jira/jira-h2g-6532.md",
+                          "title":  "H2G-6532 Re-architect Onboarding subrecord persistence as linked ORM documents",
+                          "sourceType":  "jira",
+                          "sourceUrl":  "https://castandcrew.atlassian.net/browse/H2G-6532",
+                          "sourceVersion":  "jira-snapshot-2026-10-28",
+                          "sourceUpdatedAt":  "2026-09-25",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-readme",
+                          "path":  "repo/repo-readme.md",
+                          "title":  "Test Setup and Pipeline Integration",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/README.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-handbook-readme",
+                          "path":  "repo/repo-handbook-readme.md",
+                          "title":  "H2G Developer Handbook",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/README.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-daily-workflow",
+                          "path":  "repo/repo-daily-workflow.md",
+                          "title":  "H2G Developer Daily Workflow",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/DAILY_WORKFLOW.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-frontend-standards",
+                          "path":  "repo/repo-frontend-standards.md",
+                          "title":  "H2G Frontend Standards",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/FRONTEND_STANDARDS.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-fix-version-convention",
+                          "path":  "repo/repo-fix-version-convention.md",
+                          "title":  "Fix Version \u0026 Environment Convention",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/FIX_VERSION_CONVENTION.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-active-fix-versions",
+                          "path":  "repo/repo-active-fix-versions.md",
+                          "title":  "Active Fix Versions",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/ACTIVE_FIX_VERSIONS.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-db-scripts",
+                          "path":  "repo/repo-db-scripts.md",
+                          "title":  "DB Scripts — Execution Guide",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/DB_SCRIPTS.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-metrics-tracking",
+                          "path":  "repo/repo-metrics-tracking.md",
+                          "title":  "H2G Frontend — Metrics Tracking",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/METRICS_TRACKING.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-design-document-guide",
+                          "path":  "repo/repo-design-document-guide.md",
+                          "title":  "How to Write a Design Document",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/DESIGN_DOCUMENT_GUIDE.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-module-inventory",
+                          "path":  "repo/repo-module-inventory.md",
+                          "title":  "H2G Module Inventory",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/MODULE_INVENTORY.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-architecture-migration",
+                          "path":  "repo/repo-architecture-migration.md",
+                          "title":  "Architecture Migration Guide",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Handbook/ARCHITECTURE_MIGRATION.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-kafka-readme",
+                          "path":  "repo/repo-kafka-readme.md",
+                          "title":  "Kafka Core Library",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.Kafka/README.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-objectcache-readme",
+                          "path":  "repo/repo-objectcache-readme.md",
+                          "title":  "HTGPlus.Objects.ObjectCache",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ObjectCache/README.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-external-api-design",
+                          "path":  "repo/repo-external-api-design.md",
+                          "title":  "External API Services (Redesign)",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/HTGPlus.ExternalApi/docs/external-api-design.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-onboarding-lookup-fallback",
+                          "path":  "repo/repo-onboarding-lookup-fallback.md",
+                          "title":  "Onboarding Lookup Fallback — Design",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/docs/onboarding/DESIGN_OnboardingLookupFallback.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-onboarding-package-linkage",
+                          "path":  "repo/repo-onboarding-package-linkage.md",
+                          "title":  "Onboarding Package Linkage, Counts and Retry — Design",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/docs/onboarding/DESIGN_OnboardingPackageLinkage.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      },
+                      {
+                          "documentId":  "repo-onboarding-w4-persistence",
+                          "path":  "repo/repo-onboarding-w4-persistence.md",
+                          "title":  "Onboarding W-4 Persistence — Design",
+                          "sourceType":  "repo",
+                          "sourceUrl":  "https://github.com/cast-and-crew/htg-server/blob/e570f4474dd499abcdc99292d0db31332ebd0a62/docs/onboarding/DESIGN_OnboardingW4Persistence.md",
+                          "sourceVersion":  "e570f4474d",
+                          "sourceUpdatedAt":  "2026-10-28",
+                          "domains":  [
+                                          "silverwing"
+                                      ],
+                          "initiatives":  [
+                                              "H2G-6627"
+                                          ]
+                      }
+                  ]
+}
