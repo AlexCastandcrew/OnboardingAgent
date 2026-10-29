@@ -1,0 +1,14 @@
+.gitattributes
+  h_f10f6cb95e6b57 1-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b3972422ece8c6303186112246b78f76b867fea7",
+  "prompts": {},
+  "humans": {
+    "h_f10f6cb95e6b57": {
+      "author": "AlexCastandcrew <alexander.rendon@castandcrew.com>"
+    }
+  }
+}
