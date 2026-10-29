@@ -31,19 +31,23 @@
                                      {
                                          "step":  2,
                                          "key":  "access",
-                                         "title":  "Accesos",
-                                         "goal":  "Pedir acceso a las aplicaciones: qué ticket crear, a quién y qué datos pide.",
+                                         "title":  "Accesos y herramientas",
+                                         "goal":  "Solicitar por ticket las aplicaciones, accesos y herramientas que necesitas para trabajar en HTG.",
                                          "documentIds":  [
-                                                             "confluence-access-request"
+                                                             "htg-access-checklist"
                                                          ],
                                          "suggestedQuestions":  [
-                                                                    "¿Cómo pido acceso a las aplicaciones de HTG?"
+                                                                    "¿Qué accesos debo solicitar para trabajar en HTG?",
+                                                                    "¿Qué herramientas debo instalar?",
+                                                                    "¿Qué pasa después de que me agreguen al grupo de Active Directory?"
                                                                 ],
                                          "en":  {
-                                                    "title":  "Access",
-                                                    "goal":  "Request access to the applications: which ticket to create, who to ask and what data it asks for.",
+                                                    "title":  "Access and tools",
+                                                    "goal":  "Request through a ticket the applications, accesses and tools you need to work on HTG.",
                                                     "suggestedQuestions":  [
-                                                                               "How do I request access to the HTG applications?"
+                                                                               "Which accesses do I need to request to work on HTG?",
+                                                                               "Which tools do I need to install?",
+                                                                               "What happens after I am added to the Active Directory group?"
                                                                            ]
                                                 }
                                      },
@@ -55,7 +59,8 @@
                                          "documentIds":  [
                                                              "repo-handbook-readme",
                                                              "repo-daily-workflow",
-                                                             "confluence-local-setup"
+                                                             "confluence-local-setup",
+                                                             "htg-access-checklist"
                                                          ],
                                          "links":  [
                                                        {
@@ -112,7 +117,8 @@
                                                              "confluence-local-setup",
                                                              "repo-frontend-standards",
                                                              "repo-kafka-readme",
-                                                             "repo-objectcache-readme"
+                                                             "repo-objectcache-readme",
+                                                             "htg-access-checklist"
                                                          ],
                                          "links":  [
                                                        {
@@ -151,7 +157,8 @@
                                                              "repo-fix-version-convention",
                                                              "repo-active-fix-versions",
                                                              "repo-db-scripts",
-                                                             "confluence-local-setup"
+                                                             "confluence-local-setup",
+                                                             "htg-access-checklist"
                                                          ],
                                          "links":  [
                                                        {

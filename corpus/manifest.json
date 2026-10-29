@@ -305,6 +305,21 @@
                           "initiatives":  [
                                               "H2G-6893"
                                           ]
+                      },
+                      {
+                          "documentId":  "htg-access-checklist",
+                          "path":  "manual/htg-access-checklist.md",
+                          "title":  "HTG access and tools checklist",
+                          "sourceType":  "manual",
+                          "sourceUrl":  null,
+                          "sourceVersion":  "snapshot-2026-10-29",
+                          "sourceUpdatedAt":  "2026-10-29",
+                          "domains":  [
+                                          "general"
+                                      ],
+                          "initiatives":  [
+
+                                          ]
                       }
                   ]
 }
