@@ -1,0 +1,262 @@
+.gitignore
+  h_f10f6cb95e6b57 1-6
+DEMO.md
+  h_f10f6cb95e6b57 1-41
+Directory.Build.props
+  h_f10f6cb95e6b57 1-12
+Directory.Packages.props
+  h_f10f6cb95e6b57 1-22
+OnboardingAgent.slnx
+  h_f10f6cb95e6b57 1-21
+README.md
+  h_f10f6cb95e6b57 1-440
+corpus/code/repo-excelmapping-code.md
+  h_f10f6cb95e6b57 1-175
+corpus/jira/jira-h2g-6389.md
+  h_f10f6cb95e6b57 1-47
+corpus/jira/jira-h2g-6493.md
+  h_f10f6cb95e6b57 1-31
+corpus/jira/jira-h2g-6532.md
+  h_f10f6cb95e6b57 1-24
+corpus/jira/jira-h2g-6776.md
+  h_f10f6cb95e6b57 1-31
+corpus/jira/jira-h2g-6838.md
+  h_f10f6cb95e6b57 1-21
+corpus/jira/jira-h2g-7060.md
+  h_f10f6cb95e6b57 1-21
+corpus/jira/jira-h2g-7165.md
+  h_f10f6cb95e6b57 1-17
+corpus/jira/jira-h2g-7266.md
+  h_f10f6cb95e6b57 1-13
+corpus/jira/jira-h2g-7273.md
+  h_f10f6cb95e6b57 1-17
+corpus/jira/jira-h2g-7382.md
+  h_f10f6cb95e6b57 1-11
+corpus/manifest.json
+  h_f10f6cb95e6b57 1-203
+corpus/manifest.pending.json
+  h_f10f6cb95e6b57 1-335
+corpus/repo/repo-active-fix-versions.md
+  h_f10f6cb95e6b57 1-26
+corpus/repo/repo-architecture-migration.md
+  h_f10f6cb95e6b57 1-195
+corpus/repo/repo-daily-workflow.md
+  h_f10f6cb95e6b57 1-285
+corpus/repo/repo-db-scripts.md
+  h_f10f6cb95e6b57 1-108
+corpus/repo/repo-design-document-guide.md
+  h_f10f6cb95e6b57 1-163
+corpus/repo/repo-excelmapping-design-7060.md
+  h_f10f6cb95e6b57 1-170
+corpus/repo/repo-excelmapping-design-7165.md
+  h_f10f6cb95e6b57 1-183
+corpus/repo/repo-excelmapping-design-7266.md
+  h_f10f6cb95e6b57 1-183
+corpus/repo/repo-excelmapping-design-7273.md
+  h_f10f6cb95e6b57 1-248
+corpus/repo/repo-excelmapping-design-7382.md
+  h_f10f6cb95e6b57 1-143
+corpus/repo/repo-external-api-design.md
+  h_f10f6cb95e6b57 1-219
+corpus/repo/repo-fix-version-convention.md
+  h_f10f6cb95e6b57 1-264
+corpus/repo/repo-frontend-standards.md
+  h_f10f6cb95e6b57 1-636
+corpus/repo/repo-handbook-readme.md
+  h_f10f6cb95e6b57 1-83
+corpus/repo/repo-kafka-readme.md
+  h_f10f6cb95e6b57 1-131
+corpus/repo/repo-metrics-tracking.md
+  h_f10f6cb95e6b57 1-78
+corpus/repo/repo-module-inventory.md
+  h_f10f6cb95e6b57 1-225
+corpus/repo/repo-objectcache-readme.md
+  h_f10f6cb95e6b57 1-184
+corpus/repo/repo-onboarding-lookup-fallback.md
+  h_f10f6cb95e6b57 1-299
+corpus/repo/repo-onboarding-package-linkage.md
+  h_f10f6cb95e6b57 1-303
+corpus/repo/repo-onboarding-w4-persistence.md
+  h_f10f6cb95e6b57 1-205
+corpus/repo/repo-readme.md
+  h_f10f6cb95e6b57 1-114
+corpus/sources/redactions.json
+  h_f10f6cb95e6b57 1-41
+corpus/sources/repo-docs.json
+  h_f10f6cb95e6b57 1-28
+corpus/synthetic/release-freeze.md
+  h_f10f6cb95e6b57 1-13
+corpus/teams.md
+  h_f10f6cb95e6b57 1-36
+data/onboarding.json
+  h_f10f6cb95e6b57 1-321
+data/projects.json
+  h_f10f6cb95e6b57 1-43
+eval/EVIDENCE.md
+  h_f10f6cb95e6b57 1-162
+eval/QUALITY-COMPARISON.md
+  h_f10f6cb95e6b57 1-392
+eval/cases.json
+  h_f10f6cb95e6b57 1-125
+eval/evidence/sample-chat-response.json
+  h_f10f6cb95e6b57 1-95
+eval/results/20261028-211027.json
+  h_f10f6cb95e6b57 1-677
+eval/results/20261028-211027.md
+  h_f10f6cb95e6b57 1-218
+eval/results/20261028-233210.json
+  h_f10f6cb95e6b57 1-680
+eval/results/20261028-233210.md
+  h_f10f6cb95e6b57 1-249
+eval/results/20261028-234206.json
+  h_f10f6cb95e6b57 1-672
+eval/results/20261028-234206.md
+  h_f10f6cb95e6b57 1-264
+eval/results/20261029-000138.json
+  h_f10f6cb95e6b57 1-679
+eval/results/20261029-000138.md
+  h_f10f6cb95e6b57 1-270
+eval/results/20261029-004707.json
+  h_f10f6cb95e6b57 1-676
+eval/results/20261029-004707.md
+  h_f10f6cb95e6b57 1-237
+eval/results/20261029-005539.json
+  h_f10f6cb95e6b57 1-118
+eval/results/20261029-005539.md
+  h_f10f6cb95e6b57 1-84
+eval/results/20261029-005808.json
+  h_f10f6cb95e6b57 1-118
+eval/results/20261029-005808.md
+  h_f10f6cb95e6b57 1-73
+eval/results/20261029-005958.json
+  h_f10f6cb95e6b57 1-115
+eval/results/20261029-005958.md
+  h_f10f6cb95e6b57 1-56
+eval/results/20261029-010210.json
+  h_f10f6cb95e6b57 1-677
+eval/results/20261029-010210.md
+  h_f10f6cb95e6b57 1-238
+global.json
+  h_f10f6cb95e6b57 1-6
+scripts/common.ps1
+  h_f10f6cb95e6b57 1-69
+scripts/eval.ps1
+  h_f10f6cb95e6b57 1-40
+scripts/import-repo-docs.ps1
+  h_f10f6cb95e6b57 1-129
+scripts/promote-corpus.ps1
+  h_f10f6cb95e6b57 1-36
+scripts/set-bedrock.ps1
+  h_f10f6cb95e6b57 1-63
+scripts/start.ps1
+  h_f10f6cb95e6b57 1-71
+src/OnboardingAgent.Api/Endpoints/ApiEndpoints.cs
+  h_f10f6cb95e6b57 1-190
+src/OnboardingAgent.Api/OnboardingAgent.Api.csproj
+  h_f10f6cb95e6b57 1-18
+src/OnboardingAgent.Api/OnboardingAgent.Api.http
+  h_f10f6cb95e6b57 1-37
+src/OnboardingAgent.Api/OpenApi/BearerSecurityTransformer.cs
+  h_f10f6cb95e6b57 1-43
+src/OnboardingAgent.Api/Program.cs
+  h_f10f6cb95e6b57 1-120
+src/OnboardingAgent.Api/Properties/launchSettings.json
+  h_f10f6cb95e6b57 1-23
+src/OnboardingAgent.Api/RateLimiting/ChatRateLimit.cs
+  h_f10f6cb95e6b57 1-75
+src/OnboardingAgent.Api/Startup/BearerConfiguration.cs
+  h_f10f6cb95e6b57 1-31
+src/OnboardingAgent.Api/appsettings.Development.json
+  h_f10f6cb95e6b57 1-19
+src/OnboardingAgent.Api/appsettings.json
+  h_f10f6cb95e6b57 1-50
+src/OnboardingAgent.Core/Catalog/OnboardingService.cs
+  h_f10f6cb95e6b57 1-92
+src/OnboardingAgent.Core/Catalog/ProjectCatalog.cs
+  h_f10f6cb95e6b57 1-115
+src/OnboardingAgent.Core/Chat/ChatService.cs
+  h_f10f6cb95e6b57 1-289
+src/OnboardingAgent.Core/Chat/GeneratedAnswer.cs
+  h_f10f6cb95e6b57 1-82
+src/OnboardingAgent.Core/Chat/JsonlStore.cs
+  h_f10f6cb95e6b57 1-35
+src/OnboardingAgent.Core/Chat/Prompts.cs
+  h_f10f6cb95e6b57 1-127
+src/OnboardingAgent.Core/Contracts/Contracts.cs
+  h_f10f6cb95e6b57 1-177
+src/OnboardingAgent.Core/Ingestion/IngestionService.cs
+  h_f10f6cb95e6b57 1-180
+src/OnboardingAgent.Core/Ingestion/Manifest.cs
+  h_f10f6cb95e6b57 1-40
+src/OnboardingAgent.Core/Ingestion/MarkdownChunker.cs
+  h_f10f6cb95e6b57 1-162
+src/OnboardingAgent.Core/Llm/IClaudeClient.cs
+  h_f10f6cb95e6b57 1-43
+src/OnboardingAgent.Core/OnboardingAgent.Core.csproj
+  h_f10f6cb95e6b57 1-13
+src/OnboardingAgent.Core/Options/AgentOptions.cs
+  h_f10f6cb95e6b57 1-113
+src/OnboardingAgent.Core/Options/CorpusPaths.cs
+  h_f10f6cb95e6b57 1-34
+src/OnboardingAgent.Core/Retrieval/KnowledgeIndex.cs
+  h_f10f6cb95e6b57 1-308
+src/OnboardingAgent.Core/Retrieval/Retriever.cs
+  h_f10f6cb95e6b57 1-120
+src/OnboardingAgent.Core/ServiceCollectionExtensions.cs
+  h_f10f6cb95e6b57 1-34
+src/OnboardingAgent.ExternalApi.Bedrock/BedrockClaudeClient.cs
+  h_f10f6cb95e6b57 1-139
+src/OnboardingAgent.ExternalApi.Bedrock/BedrockOptions.cs
+  h_f10f6cb95e6b57 1-66
+src/OnboardingAgent.ExternalApi.Bedrock/OnboardingAgent.ExternalApi.Bedrock.csproj
+  h_f10f6cb95e6b57 1-13
+src/OnboardingAgent.ExternalApi.Bedrock/ServiceCollectionExtensions.cs
+  h_f10f6cb95e6b57 1-15
+tests/OnboardingAgent.Api.UnitTests/ApiFactory.cs
+  h_f10f6cb95e6b57 1-116
+tests/OnboardingAgent.Api.UnitTests/ApiTests.cs
+  h_f10f6cb95e6b57 1-114
+tests/OnboardingAgent.Api.UnitTests/BearerConfigurationTests.cs
+  h_f10f6cb95e6b57 1-50
+tests/OnboardingAgent.Api.UnitTests/OnboardingAgent.Api.UnitTests.csproj
+  h_f10f6cb95e6b57 1-24
+tests/OnboardingAgent.Core.UnitTests/ChatServiceTests.cs
+  h_f10f6cb95e6b57 1-133
+tests/OnboardingAgent.Core.UnitTests/IngestionTests.cs
+  h_f10f6cb95e6b57 1-97
+tests/OnboardingAgent.Core.UnitTests/OnboardingAgent.Core.UnitTests.csproj
+  h_f10f6cb95e6b57 1-23
+tests/OnboardingAgent.Core.UnitTests/OnboardingAndCatalogTests.cs
+  h_f10f6cb95e6b57 1-66
+tests/OnboardingAgent.Core.UnitTests/OptionsValidationTests.cs
+  h_f10f6cb95e6b57 1-54
+tests/OnboardingAgent.Core.UnitTests/RetrieverTests.cs
+  h_f10f6cb95e6b57 1-93
+tests/OnboardingAgent.Core.UnitTests/TestCorpus.cs
+  h_f10f6cb95e6b57 1-69
+tests/OnboardingAgent.Evaluation.UnitTests/EvalScorerTests.cs
+  h_f10f6cb95e6b57 1-118
+tests/OnboardingAgent.Evaluation.UnitTests/OnboardingAgent.Evaluation.UnitTests.csproj
+  h_f10f6cb95e6b57 1-23
+tools/OnboardingAgent.Evaluation/EvalModels.cs
+  h_f10f6cb95e6b57 1-89
+tools/OnboardingAgent.Evaluation/EvalScorer.cs
+  h_f10f6cb95e6b57 1-165
+tools/OnboardingAgent.Evaluation/OnboardingAgent.Evaluation.csproj
+  h_f10f6cb95e6b57 1-16
+tools/OnboardingAgent.Evaluation/Program.cs
+  h_f10f6cb95e6b57 1-118
+tools/OnboardingAgent.Evaluation/ReportWriter.cs
+  h_f10f6cb95e6b57 1-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "34e78fa7f40c90332195a9d7f204e7cffff91588",
+  "prompts": {},
+  "humans": {
+    "h_f10f6cb95e6b57": {
+      "author": "AlexCastandcrew <alexander.rendon@castandcrew.com>"
+    }
+  }
+}
