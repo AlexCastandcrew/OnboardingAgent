@@ -1,0 +1,28 @@
+README.md
+  s_26c07fb7d7f7bd::t_d0de934484d17e 93-96
+  s_26c07fb7d7f7bd::t_ab66edb3b14c9e 549-551
+  s_26c07fb7d7f7bd::t_457818167337c9 503-510
+  s_26c07fb7d7f7bd::t_b051103c427926 6
+eval/EVIDENCE.md
+  s_26c07fb7d7f7bd::t_c4d873afb63328 54-80
+eval/results/20261029-220354.json
+  s_26c07fb7d7f7bd::t_3324c6763161d7 1-688
+eval/results/20261029-220354.md
+  s_26c07fb7d7f7bd::t_14696ad4decf58 1-243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a6ba42338310ee972e11423fbd4070f9db09a8c1",
+  "prompts": {},
+  "sessions": {
+    "s_26c07fb7d7f7bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a127520d-4bc4-4913-8218-1d62201d2a80",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "AlexCastandcrew <alexander.rendon@castandcrew.com>"
+    }
+  }
+}
