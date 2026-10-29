@@ -16,13 +16,13 @@ in Spanish, switch to EN, ask again). The evaluation cases were run in Spanish o
 | Time | What to show | Question or action | Case that backed it |
 |---|---|---|---|
 | 0:00–1:00 | Problem: scattered knowledge | none | n/a |
-| 1:00–2:00 | Scope: 1 project, 13 approved ExcelMapping documents, what is pending | `/api/health`, `/api/projects/htg/domains` | n/a |
+| 1:00–2:00 | Scope: 1 project, 21 active documents, what is pending | `/api/health`, `/api/projects/htg/domains` | n/a |
 | 2:00–4:00 | Developer, Silverwing, H2G-6893 | Ask "¿Qué tickets tiene el Excel Import?", then the follow-up "¿Qué cambia el último que mencionaste?" with that history (as in `followup-2`; the cited document must be the H2G-7165 design) | `followup-2`, sample in `eval/evidence/` |
 | 4:00–5:30 | QA route and answer | Onboarding route for `qa`; ask about Excel import scenarios; **note the answer is `partial`** | `qa-2` |
 | 5:30–6:30 | Leader | "¿Qué equipo es responsable de H2G-6893?" (names a team, not people) | `leader-2`, `exact-1` |
 | 6:30–7:15 | No evidence | Annual project budget question | `none-1` |
 | 7:15–8:15 | Architecture and limits | Bedrock, BM25 + Haiku rerank, citations validated by id | README |
-| 8:15–9:15 | Measured results | Post-fix evaluation: 5 of 9 role questions, latency 11 and 14 of 15 within 15 s. State that the gates are **not** met yet | `EVIDENCE.md` |
+| 8:15–9:15 | Measured results | Latest evaluation (2026-10-29): 4 of 9 role questions, 15 of 15 answers within 15 s in both runs, median about 7.5 s. State that the quality gate is **not** met yet | `EVIDENCE.md` |
 | 9:15–10:00 | Next pilot | Pending Confluence, code examples, human review. Do not claim reduced onboarding time (no study) | n/a |
 
 Do not demo while pending: access-request step, local-setup question (`dev-1` returns a partial answer from the wrong

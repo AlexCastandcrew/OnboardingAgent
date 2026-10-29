@@ -3,7 +3,7 @@
 .NET 10 Minimal API for the onboarding assistant (plan v2). It holds the onboarding routes and runs a RAG chat over
 the project corpus. Answers come from Claude on AWS Bedrock and cite their sources.
 
-**Scope and limits.** Backend only. It serves the onboarding routes and a RAG chat over a small corpus (13 approved documents today, all about ExcelMapping/Excel Import plus team overview).
+**Scope and limits.** It serves the onboarding routes and a RAG chat over a small corpus (21 active documents today, mostly ExcelMapping/Excel Import plus team, CAPS and AICOE overviews).
 It is a hackathon demo, not a production service: no embeddings, no streaming and no per-document permissions. The Angular
 frontend in `web/` is verified in mock mode only; its integration with this API is **not verified**.
 Answers are not reviewed by a human by default; see [eval/EVIDENCE.md](eval/EVIDENCE.md) for what was and was not checked.
@@ -90,8 +90,10 @@ powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 
 Parameters: `-AwsProfile <name>` (only if you use AWS credentials instead of the saved API key) and `-NoBuild`. The script
 blocks the terminal while the API runs; open another terminal for the calls below. It was run on 2026-10-28 and
-`GET /api/health` answered `"status": "ok"`, `"auth": "apiKey"`, `"configured": true` (that run had the earlier 24-document
-corpus; the corpus is now 13 documents, 17 chunks, and health was not re-run).
+`GET /api/health` answered `"status": "ok"`, `"auth": "apiKey"`, `"configured": true`. Re-run on 2026-10-29 with the current
+`start.ps1` (which passes the saved key to the API as `AWS_BEARER_TOKEN_BEDROCK`): `"status": "ok"`, 21 documents, 231 chunks,
+`"configured": true`, but `"auth": "awsCredentials"` even though the saved key was used and chat answered. Do not rely on the `auth`
+field to tell whether the key was loaded; test with one chat question.
 
 It checks the .NET SDK from `global.json` and that port 5006 is free, then builds the API. It creates a local dev
 token if none is valid and **copies it to the clipboard**; the token is never printed. It warns when the Bedrock ids or
@@ -498,7 +500,14 @@ within 15 s (median and max in the report). A last gate needs two consecutive ru
 Whether the answer states the right facts is a **manual review**. The Markdown report ends with a checklist of
 expected facts and each answer. Cases marked `needsCorpus` fail until their documents are in the manifest.
 
-Latest result, 13-document corpus, after the latency changes ([20261029-010210](eval/results/20261029-010210.md)): **does not
+Latest result, 21-document corpus (13 ExcelMapping documents plus 5 Confluence pages, the access checklist and the CAPS and
+AICOE overviews), measured 2026-10-29 ([20261029-220354](eval/results/20261029-220354.md)): **does not pass**. 4 of 9 role
+questions in both runs (`dev-2`, `qa-2`, `leader-1`, `leader-2` pass; `dev-1`, `dev-3`, `qa-1`, `qa-3`, `leader-3` fail because their
+expected documents are not in the corpus), follow-ups (including `followup-2`), no-evidence, exact-id and injection cases pass,
+zero invented citations. Latency: 15 of 15 within 15 s in both runs, median 7.7 s and 7.2 s, max 13.1 s and 12.9 s. No human has
+reviewed the answers. Details in [eval/EVIDENCE.md](eval/EVIDENCE.md).
+
+Earlier, 13-document corpus, after the latency changes ([20261029-010210](eval/results/20261029-010210.md)): **did not
 pass**. 4 of 9 role questions (the five failing ones need documents that are not approved or not imported), every other
 category passes, zero invented citations. Latency: 14 of 15 (run 1) and 15 of 15 (run 2) within 15 s, median 8.4 s and 8.2 s,
 max 15.1 s and 12.4 s. Before the changes it was 14 of 15 in both runs with a max of 16.1 s
@@ -537,8 +546,9 @@ record, rewrite fallback, and onboarding route precedence.
 
 ## Limitations and pending items
 
-- The corpus has 13 approved documents (ExcelMapping scope). The other htg-server documents and the Onboarding Documents
-  tickets are pending approval and the Confluence pages are not imported, so several onboarding steps stay `pending` and the questions that depend on them return `insufficient`.
+- The corpus has 21 active documents (13 ExcelMapping, 5 Confluence pages from the HPS space, the access checklist and the
+  CAPS and AICOE overviews). The other htg-server documents and the Onboarding Documents tickets are pending approval; local
+  setup, QA strategy and glossary are not in the corpus, so several onboarding steps stay `pending` and the questions that depend on them return `insufficient`.
 - Bedrock region and both model ids were verified with real calls on 2026-10-28 (health, evaluation and a sample question).
 - Rhaegal and Vhagar only have the team overview in `teams.md`; the answers say so and do not go deeper.
 - The Angular app is in `web/` (see [web/README.md](web/README.md)). It was verified in mock mode (build, unit tests, a
