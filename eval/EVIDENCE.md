@@ -51,7 +51,33 @@ Compared with the 24-document run, `qa-1` went from pass to fail because `repo-f
 A single UTF-8 check: sending a body with accents in Windows PowerShell 5.1 without UTF-8 bytes makes the API log an invalid
 UTF-8 error and answer 500 in Development; use UTF-8 bytes (see README). Not reviewed by a human.
 
-### Latency work (2026-10-28, same 13-document corpus)
+### Latest measurement: 21-document corpus (2026-10-29)
+
+[20261029-220354](results/20261029-220354.md) ([JSON](results/20261029-220354.json)): 2 runs of 15 cases, API on port 5006 started with
+`start.ps1` (temporary `RateLimiting__Chat__PermitLimit=200` through the environment only; `appsettings.json` still 10). The active
+manifest has 21 documents (231 chunks): the 13 ExcelMapping documents, 5 Confluence pages (HPS space, with real origin dates
+2026-07 to 2026-09 in `sourceUpdatedAt`), `htg-access-checklist`, `caps-overview` and `aicoe-overview`. The 8 new documents were not
+added in this review; a regex scan for emails, SSNs, personal SharePoint links, local paths and keys found nothing, but names in
+free text and the Bedrock approval for them were not checked. Criteria unchanged.
+
+| Gate | Run 1 | Run 2 |
+|---|---|---|
+| Role questions answered with support (need 8 of 9) | FAIL, 4 of 9 | FAIL, 4 of 9 |
+| No-evidence, follow-ups, exact id, injection | PASS | PASS |
+| Zero invented citations, cited docs open | PASS | PASS |
+| Spanish question finds English source | PASS | PASS |
+| Answers within 15 s | PASS, 15 of 15 (median 7.7 s, max 13.1 s) | PASS, 15 of 15 (median 7.2 s, max 12.9 s) |
+| Two consecutive passing runs | **FAIL** | |
+
+Role cases that pass: `dev-2`, `qa-2`, `leader-1`, `leader-2`. Failing: `dev-1` (now `partial`, citing the access checklist and a
+Confluence design page, but not the expected local-setup documents), `dev-3`, `qa-1`, `qa-3` (`insufficient`) and `leader-3`
+(`partial`, cites `teams` and a Confluence page, not the Onboarding Documents tickets). All five need documents that are not in the
+corpus: handbook and local setup, fix version convention, and the Onboarding Documents tickets (pending approval). `followup-2` passes
+in both runs (10.9 s and 10.2 s). `none-2` is `insufficient` but still cites two documents in run 2; the reviewer should confirm they
+are not presented as support. `dev-1` is the case to read first: a `partial` answer to "how do I run HTG locally" from an access
+checklist can look more helpful than the sources justify. Not reviewed by a human.
+
+### Latency work (2026-10-28, 13-document corpus)
 
 Per-call timings come from the `[Bedrock]` log lines. Before: rewrite 2.4-3.1 s, rerank 2.2-3.9 s (144-360 output tokens for a
 list of ids, so Haiku was thinking), answer 9-12 s (800-1300 output tokens). Changes, all in code and config:
