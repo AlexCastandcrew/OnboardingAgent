@@ -240,6 +240,39 @@ public sealed record KnowledgeGap(
     string Question,
     DateTimeOffset At);
 
+// ---------- Progress and admin ----------
+
+public sealed record MeResponse(string UserLabel, bool IsAdmin);
+
+public sealed record SaveProgressRequest
+{
+    /// <example>htg</example>
+    [Required] public required string ProjectId { get; init; }
+
+    /// <example>developer</example>
+    [Required] public required string Role { get; init; }
+
+    public string? Domain { get; init; }
+    public string? Initiative { get; init; }
+
+    /// <summary>Keys of the route steps the user marked as done.</summary>
+    public List<string>? DoneSteps { get; init; }
+
+    /// <summary>Steps of the route that have documents, the ones that can be done.</summary>
+    public int TotalSteps { get; init; }
+}
+
+/// <param name="Level">1 to 4, from the share of the route done.</param>
+/// <param name="Day">Day of the onboarding, the first day is 1.</param>
+/// <param name="QuestionsAsked">A count. The questions themselves are never stored.</param>
+/// <param name="Pace">"ahead", "onPace" or "behind" against the target days.</param>
+public sealed record MyProgress(string UserLabel, int Level, int StepsDone, int StepsTotal, int Day, int QuestionsAsked, string Pace, int TargetDays, DateTimeOffset? LastActivityAt);
+
+/// <param name="Sample">True for made-up demo people, never for a real user.</param>
+public sealed record PersonProgress(string Person, string Team, string Role, int Level, int StepsDone, int StepsTotal, int Day, string Pace, DateTimeOffset LastActivityAt, bool Sample);
+
+public sealed record AdminOverview(IReadOnlyList<PersonProgress> People, int TargetDays);
+
 // ---------- Health ----------
 
 public sealed record IndexHealth(int Documents, int Chunks, string? LastIngestedAt);

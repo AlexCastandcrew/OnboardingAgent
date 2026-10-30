@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, concat, concatMap, delay, from, of, throwError } from 'rxjs';
 import { Language } from './i18n';
 import {
+  AdminOverview,
   ChatActivity,
   ChatRequest,
   ChatResponse,
@@ -12,11 +13,15 @@ import {
   FeedbackRequest,
   HealthResponse,
   KnowledgeSummary,
+  MeResponse,
+  MyProgress,
   OnboardingRoute,
   OnboardingStep,
   ProjectSummary,
   Role,
+  SaveProgressRequest,
 } from './models';
+import { levelOf } from './progress';
 import { OnboardingApi } from './onboarding-api';
 
 const LATENCY_MS = 700;
@@ -208,6 +213,7 @@ export class MockOnboardingApi extends OnboardingApi {
    * real work behind them. A message containing "[error]" fails at the ranking step with a 502.
    */
   chatStream(request: ChatRequest): Observable<ChatStreamEvent> {
+    this.mine = { ...this.mine, questionsAsked: this.mine.questionsAsked + 1 };
     const none = /presupuesto|budget/i.test(request.message);
     const fails = request.message.includes('[error]');
     const step = (id: string, stepName: string, status: ChatActivity['status'], message: string, detail?: ChatActivity['detail']) => (): ChatStreamEvent => ({
@@ -254,5 +260,51 @@ export class MockOnboardingApi extends OnboardingApi {
 
   feedback(_request: FeedbackRequest): Observable<void> {
     return of(undefined).pipe(delay(150));
+  }
+
+  private mine: MyProgress = { userLabel: 'demo-user', level: 1, stepsDone: 0, stepsTotal: 0, day: 1, questionsAsked: 0, pace: 'onPace', targetDays: 14, lastActivityAt: null };
+  private mineRole = 'developer';
+  private mineTeam = 'general';
+
+  me(): Observable<MeResponse> {
+    return of<MeResponse>({ userLabel: this.mine.userLabel, isAdmin: true }).pipe(delay(150));
+  }
+
+  myProgress(): Observable<MyProgress> {
+    return of(this.mine).pipe(delay(150));
+  }
+
+  saveProgress(request: SaveProgressRequest): Observable<MyProgress> {
+    this.mineRole = request.role;
+    this.mineTeam = request.domain ?? 'general';
+    this.mine = {
+      ...this.mine,
+      level: levelOf(request.doneSteps.length, request.totalSteps),
+      stepsDone: request.doneSteps.length,
+      stepsTotal: request.totalSteps,
+      lastActivityAt: new Date().toISOString(),
+    };
+    return of(this.mine).pipe(delay(150));
+  }
+
+  adminOverview(): Observable<AdminOverview> {
+    const hoursAgo = (h: number) => new Date(Date.now() - h * 3_600_000).toISOString();
+    const sample = (n: number, team: string, role: string, done: number, day: number, pace: MyProgress['pace'], hours: number) => ({
+      person: `Person ${String(n).padStart(2, '0')}`, team, role, level: levelOf(done, 4), stepsDone: done, stepsTotal: 4, day, pace, lastActivityAt: hoursAgo(hours), sample: true,
+    });
+    return of<AdminOverview>({
+      targetDays: 14,
+      people: [
+        { person: this.mine.userLabel, team: this.mineTeam, role: this.mineRole, level: this.mine.level, stepsDone: this.mine.stepsDone, stepsTotal: this.mine.stepsTotal, day: this.mine.day, pace: this.mine.pace, lastActivityAt: this.mine.lastActivityAt ?? hoursAgo(0), sample: false },
+        sample(1, 'silverwing', 'developer', 3, 9, 'onPace', 3),
+        sample(2, 'silverwing', 'qa', 2, 10, 'onPace', 20),
+        sample(3, 'silverwing', 'leader', 4, 8, 'ahead', 6),
+        sample(4, 'rhaegal', 'developer', 1, 12, 'behind', 52),
+        sample(5, 'rhaegal', 'qa', 2, 11, 'onPace', 30),
+        sample(6, 'vhagar', 'developer', 2, 7, 'ahead', 5),
+        sample(7, 'vhagar', 'developer', 1, 5, 'onPace', 2),
+        sample(8, 'silverwing', 'developer', 2, 14, 'behind', 70),
+      ],
+    }).pipe(delay(300));
   }
 }

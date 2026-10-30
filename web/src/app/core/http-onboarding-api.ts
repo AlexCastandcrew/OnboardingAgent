@@ -4,6 +4,7 @@ import { Observable, Subscriber } from 'rxjs';
 import { Language } from './i18n';
 import { parseSseFrames } from './sse';
 import {
+  AdminOverview,
   ChatActivity,
   ChatRequest,
   ChatResponse,
@@ -13,9 +14,12 @@ import {
   FeedbackRequest,
   HealthResponse,
   KnowledgeSummary,
+  MeResponse,
+  MyProgress,
   OnboardingRoute,
   ProjectSummary,
   Role,
+  SaveProgressRequest,
 } from './models';
 import { OnboardingApi } from './onboarding-api';
 
@@ -150,5 +154,21 @@ export class HttpOnboardingApi extends OnboardingApi {
 
   feedback(request: FeedbackRequest): Observable<void> {
     return this.http.post<void>('/api/feedback', request);
+  }
+
+  me(): Observable<MeResponse> {
+    return this.http.get<MeResponse>('/api/me');
+  }
+
+  myProgress(): Observable<MyProgress> {
+    return this.http.get<MyProgress>('/api/me/progress');
+  }
+
+  saveProgress(request: SaveProgressRequest): Observable<MyProgress> {
+    return this.http.put<MyProgress>('/api/me/progress', request);
+  }
+
+  adminOverview(): Observable<AdminOverview> {
+    return this.http.get<AdminOverview>('/api/admin/overview');
   }
 }

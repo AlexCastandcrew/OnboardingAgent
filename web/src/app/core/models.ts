@@ -209,3 +209,52 @@ export const ROLES: readonly { id: Role; label: string }[] = [
 
 export const MAX_MESSAGE_CHARS = 2000;
 export const MAX_HISTORY_ITEMS = 6;
+
+/** Who is signed in and whether they can open the admin view (GET /api/me). */
+export interface MeResponse {
+  userLabel: string;
+  isAdmin: boolean;
+}
+
+export type Pace = 'ahead' | 'onPace' | 'behind';
+
+/** The user's own progress (GET and PUT /api/me/progress). The questions themselves are never stored, only their count. */
+export interface MyProgress {
+  userLabel: string;
+  level: number;
+  stepsDone: number;
+  stepsTotal: number;
+  day: number;
+  questionsAsked: number;
+  pace: Pace;
+  targetDays: number;
+  lastActivityAt: string | null;
+}
+
+export interface SaveProgressRequest {
+  projectId: string;
+  role: Role;
+  domain?: string;
+  initiative?: string;
+  doneSteps: string[];
+  totalSteps: number;
+}
+
+/** One row of the admin view. sample marks made-up demo people. */
+export interface PersonProgress {
+  person: string;
+  team: string;
+  role: string;
+  level: number;
+  stepsDone: number;
+  stepsTotal: number;
+  day: number;
+  pace: Pace;
+  lastActivityAt: string;
+  sample: boolean;
+}
+
+export interface AdminOverview {
+  people: PersonProgress[];
+  targetDays: number;
+}

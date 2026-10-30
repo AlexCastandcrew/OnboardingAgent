@@ -34,4 +34,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(new JsonlStore<KnowledgeGap>(Path.Combine(paths.StateFolder, "gaps.jsonl")));
         return services;
     }
+
+    /// <summary>Registers per-user onboarding progress (saved in the state folder) for the personal and the admin view.</summary>
+    public static IServiceCollection AddProgressTracking(this IServiceCollection services, ProgressOptions progress, CorpusPaths paths)
+    {
+        services.AddSingleton(progress);
+        services.AddSingleton(sp => new Progress.ProgressStore(Path.Combine(paths.StateFolder, "progress.json"), sp.GetRequiredService<TimeProvider>()));
+        return services;
+    }
 }

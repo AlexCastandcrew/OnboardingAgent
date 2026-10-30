@@ -405,6 +405,10 @@ Service account keys (`Bearer`) are not supported.
 | POST | `/api/chat` | The plan's contract plus `language`, `answerId`, `claims` and `diagnostics`. `language` is `es` or `en`; the answer is written in that language whatever language the question or the sources use. Without it the answer follows the question's language. |
 | GET | `/api/projects/{projectId}/knowledge` | What the index holds for the project: documents, passages, documents per source type, repositories (derived from the GitHub URLs of `repo` documents), teams, initiatives and the last indexing date. Feeds the "Your project at a glance" card. |
 | POST | `/api/chat/stream` | Same request and same pipeline as `/api/chat`, answered as Server-Sent Events: `activity` events (the real steps, see below), then `response` (the same body as `/api/chat`) or `error`. See [Activity stream](#activity-stream). |
+| GET | `/api/me` | The signed-in user and whether they are an admin. |
+| GET | `/api/me/progress` | Your own level (1 to 4), steps done, day, questions asked (a count) and pace. |
+| PUT | `/api/me/progress` | Stores the steps of the route you marked as done; the web app sends it on every change. |
+| GET | `/api/admin/overview` | Level, steps, day and pace of every person, for admins (role claim `admin` or `Progress:AdminUsers`). 403 for anyone else. Never includes question texts. |
 | GET | `/api/documents/{documentId}` | The document's text, metadata and sections, for the local evidence view. |
 | POST | `/api/feedback` | Useful or not useful for an `answerId` (P1). |
 | GET | `/api/gaps` | Questions answered with `insufficient` evidence (P1). |
@@ -422,6 +426,28 @@ error is never returned as `insufficient`.
 for each user (the token's subject), or for each IP without a user. Over the limit it returns 429 with a
 `Retry-After` header and a ProblemDetails body. This protects the Bedrock budget and quotas.
 
+## Progress and admin view
+
+Each person's onboarding progress is kept on the server so a personal view and an admin view can show it (`GET/PUT /api/me/progress`,
+`GET /api/admin/overview`, stored in `.data/progress.json`). The web app marks steps in the browser as before and also sends them to the API.
+
+- **What is stored:** the steps marked as done, the route context (project, role, team, initiative), when the person started, the last
+  activity and **how many** questions they asked. **Question texts are never stored or returned** (a test checks it).
+- **Level:** 1 with nothing done up to 4 with the whole route done (`1 + floor(3 x done / total)`).
+- **Day:** days since the first activity, counting the first day as 1.
+- **Pace:** the share of the route done compared with the share of `Progress:TargetDays` (default 14) that has passed. A gap of 15 points
+  or more is `ahead` or `behind`, otherwise `onPace`. A person who finished the route is never `behind`.
+- **Admin:** a token with the role claim `admin` (`dotnet user-jwts create --role admin`) or a user listed in `Progress:AdminUsers`.
+  `appsettings.Development.json` lists `onboarding-dev`, the local dev token, so the demo can switch between both views. Do not list users
+  that way outside local development: use the identity provider's role claim.
+- **Sample data:** with `Progress:SeedSampleData` (on in Development) eight made-up people are added at every start so the admin view has
+  data for a demo. They are flagged `sample`, shown as "sample" in the table and replaced at the next start; real users are never touched.
+- **Web:** the home card "Your onboarding path" shows level, day, questions and pace. A "My path / Admin" switch appears in the top bar
+  when `GET /api/me` says the user is an admin; the admin view filters by team and role and averages the people shown.
+
+Not done: login and per-user identities beyond the token, consent and opt-out, retention, an admin screen for editing anything, and a
+definition of "level" beyond the share of the route done. Per-person tracking has HR and privacy implications: decide with the right
+people before using it with real hires.
 ## Chat flow
 
 1. Validate the request. Client history is untrusted: only `user`/`assistant` items, the last 6, at most 2000
@@ -534,7 +560,9 @@ within 15 s (median and max in the report). A last gate needs two consecutive ru
 Whether the answer states the right facts is a **manual review**. The Markdown report ends with a checklist of
 expected facts and each answer. Cases marked `needsCorpus` fail until their documents are in the manifest.
 
-Latest result, 21-document corpus (13 ExcelMapping documents plus 5 Confluence pages, the access checklist and the CAPS and
+Latest result, after the activity-stream merge, 2026-10-30 ([20261030-140107](eval/results/20261030-140107.md)): same outcome as below, **does not pass**: 4 of 9 role questions in both runs, every other category passes, zero invented citations, 15 of 15 answers within 15 s in both runs (median 7.9 s and 7.3 s, max 11.8 s and 12.9 s). A real `/api/chat/stream` call returned the 12 documented events and the answer.
+
+Earlier result, 21-document corpus (13 ExcelMapping documents plus 5 Confluence pages, the access checklist and the CAPS and
 AICOE overviews), measured 2026-10-29 ([20261029-220354](eval/results/20261029-220354.md)): **does not pass**. 4 of 9 role
 questions in both runs (`dev-2`, `qa-2`, `leader-1`, `leader-2` pass; `dev-1`, `dev-3`, `qa-1`, `qa-3`, `leader-3` fail because their
 expected documents are not in the corpus), follow-ups (including `followup-2`), no-evidence, exact-id and injection cases pass,
@@ -592,4 +620,4 @@ record, rewrite fallback, and onboarding route precedence.
 - No claim is made about onboarding time saved.
 - No embeddings: BM25 plus the Haiku rerank. `Chat:MinScore` is 0 until the evaluation calibrates it.
 - No streaming. The response is one JSON object.
-- Authentication only checks for a valid token; there are no roles or per-document permissions. Reindex also only accepts loopback calls.
+- Authentication checks for a valid token; the only role is `admin` (admin view, see Progress and admin view). There are no per-document permissions. Reindex also only accepts loopback calls.

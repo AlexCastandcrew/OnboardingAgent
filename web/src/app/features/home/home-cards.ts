@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { I18n } from '../../core/i18n';
-import { ROLES } from '../../core/models';
+import { I18n, TranslationKey } from '../../core/i18n';
+import { ROLES, Pace } from '../../core/models';
 import { SessionStore } from '../../core/session-store';
 import { IconComponent } from '../../shared/icon';
 import { SourceBadgeComponent } from '../../shared/source-badge';
@@ -40,6 +40,15 @@ import { SourceBadgeComponent } from '../../shared/source-badge';
             <dd>{{ progress().current ? progress().current!.title : i18n.t('home.progress.allDone') }}</dd>
           </div>
         </dl>
+        @if (store.myProgress(); as me) {
+          <dl class="progress-facts me-facts" [attr.aria-label]="i18n.t('home.progress.title')">
+            <div><dt>{{ i18n.t('me.level') }}</dt><dd>{{ me.level }} / 4 · {{ i18n.t(levelKey(me.level)) }}</dd></div>
+            <div><dt>{{ i18n.t('me.day') }}</dt><dd>{{ me.day }}</dd></div>
+            <div><dt>{{ i18n.t('me.questions') }}</dt><dd>{{ me.questionsAsked }}</dd></div>
+            <div><dt>{{ i18n.t('me.pace') }}</dt><dd><span class="pace-chip" [attr.data-pace]="me.pace">{{ i18n.t(paceKey(me.pace)) }}</span></dd></div>
+          </dl>
+          <p class="muted progress-note">{{ i18n.t('me.privacy') }}</p>
+        }
         @if (progress().current; as current) {
           <button type="button" class="btn-primary" [disabled]="store.asking()" (click)="store.ask(firstQuestion())">
             {{ i18n.t('home.progress.continue') }}<app-icon name="arrow-up" />
@@ -59,6 +68,12 @@ export class OnboardingProgressComponent {
   protected readonly store = inject(SessionStore);
   protected readonly i18n = inject(I18n);
   protected readonly progress = this.store.progress;
+  protected levelKey(level: number): TranslationKey {
+    return `me.level.${Math.min(Math.max(level, 1), 4)}` as TranslationKey;
+  }
+  protected paceKey(pace: Pace): TranslationKey {
+    return `pace.${pace}` as TranslationKey;
+  }
   protected readonly roleLabel = computed(() => ROLES.find((r) => r.id === this.store.role())?.label ?? this.store.role());
   protected readonly firstQuestion = computed(() => {
     const step = this.progress().current;

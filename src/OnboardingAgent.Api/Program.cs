@@ -7,6 +7,7 @@ using OnboardingAgent.Api.Startup;
 using OnboardingAgent.Core;
 using OnboardingAgent.Core.Ingestion;
 using OnboardingAgent.Core.Options;
+using OnboardingAgent.Core.Progress;
 using OnboardingAgent.Core.Sync;
 using OnboardingAgent.ExternalApi.Atlassian;
 using OnboardingAgent.ExternalApi.Bedrock;
@@ -22,6 +23,7 @@ var atlassian = builder.Configuration.GetSection(AtlassianOptions.Section).Get<A
 var corpus = builder.Configuration.GetSection(CorpusOptions.Section).Get<CorpusOptions>() ?? new();
 var chat = builder.Configuration.GetSection(ChatOptions.Section).Get<ChatOptions>() ?? new();
 var chatRateLimit = builder.Configuration.GetSection(ChatRateLimitOptions.Section).Get<ChatRateLimitOptions>() ?? new();
+var progress = builder.Configuration.GetSection(ProgressOptions.Section).Get<ProgressOptions>() ?? new();
 var paths = CorpusPaths.Resolve(corpus, builder.Environment.ContentRootPath);
 
 // Fail fast with every configuration problem at once, instead of one at a time on the first request.
@@ -31,6 +33,7 @@ var problems = corpus.Validate()
     .Concat(bedrock.Validate())
     .Concat(atlassian.Validate())
     .Concat(chatRateLimit.Validate())
+    .Concat(progress.Validate())
     // The ingest command never serves requests, so it needs no bearer settings.
     .Concat(ingestOnly || syncOnly ? [] : BearerConfiguration.Validate(builder.Configuration))
     .ToList();
@@ -46,6 +49,7 @@ if (problems.Count > 0)
 }
 
 builder.Services.AddOnboardingCore(corpus, chat, paths);
+builder.Services.AddProgressTracking(progress, paths);
 builder.Services.AddBedrockClaude(bedrock);
 builder.Services.AddAtlassianConfluence(atlassian);
 
@@ -55,7 +59,7 @@ builder.Services.AddProblemDetails();
 // Bearer JWT. Issuer, audiences and signing keys come from Authentication:Schemes:Bearer (dotnet user-jwts locally,
 // an Authority such as the corporate identity provider elsewhere).
 builder.Services.AddAuthentication().AddJwtBearer();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(o => o.AddPolicy(AdminPolicy.Name, p => p.RequireAssertion(ctx => AdminPolicy.IsAdmin(ctx.User, progress))));
 builder.Services.AddChatRateLimit(chatRateLimit);
 
 builder.Services.AddOpenApi(o =>
@@ -97,6 +101,12 @@ if (ingestOnly)
     var result = app.Services.GetRequiredService<IngestionService>().Ingest(corpusFolder, manifest);
     Console.WriteLine(JsonSerializer.Serialize(result, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true }));
     return result.Failed.Count == 0 ? 0 : 1;
+}
+
+if (progress.SeedSampleData)
+{
+    app.Services.GetRequiredService<ProgressStore>().ReplaceSampleData(SampleProgress.Build(TimeProvider.System.GetUtcNow()));
+    app.Logger.LogInformation("[Progress] Sample people added for the admin view (Progress:SeedSampleData)");
 }
 
 if (corpus.IngestOnStartup)

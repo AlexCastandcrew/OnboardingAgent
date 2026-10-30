@@ -116,3 +116,16 @@ npm ci
 npx ng build            # production build
 npx ng test --watch=false --browsers=ChromeHeadless
 ```
+
+## Personal and admin views
+
+- **Personal:** the home card "Your onboarding journey" now also shows level (1 to 4), day, questions asked and pace, read from
+  `GET /api/me/progress`. Marking a step or asking one of its suggested questions also sends the steps to `PUT /api/me/progress`
+  (`SessionStore.syncProgress`); a failure is silent and the browser copy keeps working. Only the steps are sent, never the questions.
+- **Admin:** when `GET /api/me` says `isAdmin`, the top bar shows "My path / Admin". The admin view (`features/admin/admin-view.ts`,
+  helpers in `core/admin.ts`) lists everyone's level, steps, day and pace, filters by team and role, and averages the people shown.
+  Rows flagged `sample` are made-up demo people and say so. With `-Mock` the mock user is an admin and the table has fixtures; against
+  the real API the local dev token is an admin because of `Progress:AdminUsers` in `appsettings.Development.json`.
+- **Verified:** build, 52 unit tests, and a manual walkthrough against the real API (marked a step, saw it in the personal card and in the
+  admin table, filtered by team). Not verified: small screens for the new top-bar switch and the admin table, and a non-admin token in the browser
+  (the API returns 403, covered by an API test).

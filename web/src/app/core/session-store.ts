@@ -5,12 +5,15 @@ import { ApiError, toApiError } from './api-error';
 import { ChatMessage, buildHistory } from './history';
 import { I18n, Language } from './i18n';
 import {
+  AdminOverview,
   ChatSource,
   DocumentView,
   DomainSummary,
   HealthResponse,
   KnowledgeSummary,
   MAX_MESSAGE_CHARS,
+  MeResponse,
+  MyProgress,
   OnboardingRoute,
   ProjectSummary,
   Role,
@@ -87,6 +90,15 @@ export class SessionStore {
   readonly knowledge = signal<KnowledgeSummary | null>(null);
   readonly knowledgeFailed = signal(false);
 
+  /** Who is signed in. Null until known or when the call failed: then there is no admin view. */
+  readonly me = signal<MeResponse | null>(null);
+  /** The server's copy of the user's progress: level, day, questions asked (a count) and pace. */
+  readonly myProgress = signal<MyProgress | null>(null);
+  readonly view = signal<'chat' | 'admin'>('chat');
+  readonly adminOverview = signal<AdminOverview | null>(null);
+  readonly adminLoading = signal(false);
+  readonly adminError = signal<ApiError | null>(null);
+
   private readonly progressState = signal<ProgressState>(loadProgress());
   private readonly doneKeys = computed(() => this.progressState()[this.progressKey()] ?? []);
   private readonly progressKey = computed(() => contextKey(this.projectId() ?? '', this.role(), this.domain(), this.initiative()));
@@ -109,6 +121,7 @@ export class SessionStore {
 
     try {
       const projects = await firstValueFrom(this.api.projects());
+      void this.loadMe();
       this.projects.set(projects);
       if (projects.length > 0) {
         await this.selectProject(projects[0].projectId);
@@ -133,6 +146,65 @@ export class SessionStore {
     await this.reload();
   }
 
+  private async loadMe(): Promise<void> {
+    try {
+      this.me.set(await firstValueFrom(this.api.me()));
+      this.myProgress.set(await firstValueFrom(this.api.myProgress()));
+    } catch {
+      // Without the server's copy the browser's own progress still works; there is just no level, pace or admin view.
+    }
+  }
+
+  /** Tells the server which steps are done, so the level, day and pace (and the admin view) follow. A failure is silent. */
+  private async syncProgress(): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId || this.route() === null) {
+      return;
+    }
+
+    try {
+      this.myProgress.set(await firstValueFrom(this.api.saveProgress({
+        projectId,
+        role: this.role(),
+        domain: this.domain() ?? undefined,
+        initiative: this.initiative() ?? undefined,
+        doneSteps: [...this.doneKeys()],
+        totalSteps: this.progress().total,
+      })));
+    } catch {
+      // The browser's copy is still right; the server's copy catches up on the next change.
+    }
+  }
+
+  private async refreshMyProgress(): Promise<void> {
+    try {
+      this.myProgress.set(await firstValueFrom(this.api.myProgress()));
+    } catch {
+      // Keep the last known values.
+    }
+  }
+
+  async openAdmin(): Promise<void> {
+    this.view.set('admin');
+    await this.loadAdmin();
+  }
+
+  closeAdmin(): void {
+    this.view.set('chat');
+  }
+
+  async loadAdmin(): Promise<void> {
+    this.adminLoading.set(true);
+    this.adminError.set(null);
+    try {
+      this.adminOverview.set(await firstValueFrom(this.api.adminOverview()));
+    } catch (error) {
+      this.adminError.set(toApiError(error, this.i18n.t));
+    } finally {
+      this.adminLoading.set(false);
+    }
+  }
+
   private async loadKnowledge(projectId: string): Promise<void> {
     this.knowledge.set(null);
     this.knowledgeFailed.set(false);
@@ -155,6 +227,7 @@ export class SessionStore {
   private setProgress(state: ProgressState): void {
     this.progressState.set(state);
     saveProgress(state);
+    void this.syncProgress();
   }
 
   async selectRole(role: Role): Promise<void> {
@@ -234,6 +307,7 @@ export class SessionStore {
     } finally {
       this.loadingRoute.set(false);
     }
+    void this.syncProgress();
   }
 
   /** Clears the conversation and any open evidence; the project, role, team, initiative and language stay. */
@@ -326,6 +400,7 @@ export class SessionStore {
             this.messages.update((m) => [...m, { kind: 'assistant', response: event.response, activities: this.activities() }]);
             this.activities.set([]);
             this.lastQuestion = null;
+            void this.refreshMyProgress();
           }
         },
         error: (error) => {

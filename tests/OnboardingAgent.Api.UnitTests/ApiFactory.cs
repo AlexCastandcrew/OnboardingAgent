@@ -59,18 +59,20 @@ internal sealed class ApiFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services => services.AddSingleton<IClaudeClient>(Claude));
     }
 
-    public HttpClient ClientFor(string user)
+    public HttpClient ClientFor(string user, string? role = null)
     {
         var client = CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(user));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(user, role: role));
         return client;
     }
 
-    public string Token(string user, string audience = Audience) => new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor
+    public string Token(string user, string audience = Audience, string? role = null) => new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor
     {
         Issuer = Issuer,
         Audience = audience,
-        Subject = new ClaimsIdentity([new Claim("sub", user), new Claim("unique_name", user)]),
+        Subject = new ClaimsIdentity(role is null
+            ? [new Claim("sub", user), new Claim("unique_name", user)]
+            : [new Claim("sub", user), new Claim("unique_name", user), new Claim("role", role)]),
         Expires = DateTime.UtcNow.AddMinutes(10),
         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_signingKey), SecurityAlgorithms.HmacSha256)
     });

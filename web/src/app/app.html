@@ -17,6 +17,12 @@
     <span>{{ i18n.t('app.tagline') }}</span>
   </div>
 
+  @if (store.me()?.isAdmin) {
+    <div class="view-switch" role="group" [attr.aria-label]="i18n.t('view.label')">
+      <button type="button" class="lang-button" [class.active]="store.view() === 'chat'" [attr.aria-pressed]="store.view() === 'chat'" (click)="store.closeAdmin()">{{ i18n.t('view.chat') }}</button>
+      <button type="button" class="lang-button" [class.active]="store.view() === 'admin'" [attr.aria-pressed]="store.view() === 'admin'" (click)="store.openAdmin()">{{ i18n.t('view.admin') }}</button>
+    </div>
+  }
   <div class="language" role="group" [attr.aria-label]="i18n.t('lang.label')">
     @for (option of languages; track option.id) {
       <button
@@ -47,7 +53,11 @@
   </aside>
 
   <main class="main">
-    <app-chat />
+    @if (store.view() === 'admin' && store.me()?.isAdmin) {
+      <app-admin-view />
+    } @else {
+      <app-chat />
+    }
   </main>
 </div>
 

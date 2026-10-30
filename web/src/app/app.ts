@@ -1,6 +1,7 @@
 import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { I18n, LANGUAGES } from './core/i18n';
 import { SessionStore } from './core/session-store';
+import { AdminViewComponent } from './features/admin/admin-view';
 import { ChatComponent } from './features/chat/chat';
 import { EvidenceComponent } from './features/evidence/evidence';
 import { RouteComponent } from './features/route/route';
@@ -9,7 +10,7 @@ import { IconComponent } from './shared/icon';
 
 @Component({
   selector: 'app-root',
-  imports: [SelectionComponent, RouteComponent, ChatComponent, EvidenceComponent, IconComponent],
+  imports: [SelectionComponent, RouteComponent, ChatComponent, AdminViewComponent, EvidenceComponent, IconComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
   host: { '(document:keydown.escape)': 'drawerOpen.set(false)' },

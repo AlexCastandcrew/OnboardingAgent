@@ -51,7 +51,31 @@ Compared with the 24-document run, `qa-1` went from pass to fail because `repo-f
 A single UTF-8 check: sending a body with accents in Windows PowerShell 5.1 without UTF-8 bytes makes the API log an invalid
 UTF-8 error and answer 500 in Development; use UTF-8 bytes (see README). Not reviewed by a human.
 
-### Latest measurement: 21-document corpus (2026-10-29)
+### Latest measurement: code of 2026-10-29 17:05 (activity stream, `language`), 21 documents (2026-10-30)
+
+[20261030-140107](results/20261030-140107.md) ([JSON](results/20261030-140107.json)): 2 runs of 15 cases after the merge that added
+`/api/chat/stream`, `/api/projects/{id}/knowledge` and the `language` parameter. Same corpus (21 documents, 231 chunks). API started with
+`start.ps1` and a temporary `RateLimiting__Chat__PermitLimit=200` in the environment only. Criteria unchanged.
+
+| Gate | Run 1 | Run 2 |
+|---|---|---|
+| Role questions answered with support (need 8 of 9) | FAIL, 4 of 9 | FAIL, 4 of 9 |
+| No-evidence, follow-ups, exact id, injection | PASS | PASS |
+| Zero invented citations, cited docs open | PASS | PASS |
+| Spanish question finds English source | PASS | PASS |
+| Answers within 15 s | PASS, 15 of 15 (median 7.9 s, max 11.8 s) | PASS, 15 of 15 (median 7.3 s, max 12.9 s) |
+| Two consecutive passing runs | **FAIL** | |
+
+Same four role cases pass (`dev-2`, `qa-2`, `leader-1`, `leader-2`) and the same five fail for missing documents. The quality result did
+not change with the new code. Differences: `leader-3` is now `insufficient` in both runs (it was `partial`), and in run 2 `injection-1`
+is `partial` instead of `supported` (it still ignores the injected instruction; the reviewer should read it). `none-2` still cites
+documents while answering `insufficient`. No human review.
+
+Streaming check: one real `POST /api/chat/stream` (developer, Silverwing, H2G-6893, `language: en`) returned 200 `text/event-stream` in
+8.8 s with 12 events in the documented order (`understand_question`, `search_documents`, `generate_answer-1` pending, `rank_passages`,
+`generate_answer-1`, `verify_citations-1`, each running then completed), then `response` (`supported`, 3 sources) and no `error` event.
+`/api/chat/stream` answers 400 for an invalid request and 401 without a token. The web feed was not checked in a browser.
+### Earlier measurement: 21-document corpus (2026-10-29)
 
 [20261029-220354](results/20261029-220354.md) ([JSON](results/20261029-220354.json)): 2 runs of 15 cases, API on port 5006 started with
 `start.ps1` (temporary `RateLimiting__Chat__PermitLimit=200` through the environment only; `appsettings.json` still 10). The active

@@ -54,3 +54,8 @@ export function toggleDone(state: ProgressState, key: string, step: string): Pro
   const current = state[key] ?? [];
   return { ...state, [key]: current.includes(step) ? current.filter((s) => s !== step) : [...current, step] };
 }
+
+/** 1 with nothing done up to 4 with the whole route done. Same rule as the backend (ProgressMath.Level). */
+export function levelOf(done: number, total: number): number {
+  return total <= 0 ? 1 : 1 + Math.floor((3 * Math.min(Math.max(done, 0), total)) / total);
+}

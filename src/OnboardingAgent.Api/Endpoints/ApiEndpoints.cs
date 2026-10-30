@@ -11,6 +11,7 @@ using OnboardingAgent.Core.Contracts;
 using OnboardingAgent.Core.Ingestion;
 using OnboardingAgent.Core.Llm;
 using OnboardingAgent.Core.Options;
+using OnboardingAgent.Core.Progress;
 using OnboardingAgent.Core.Retrieval;
 using OnboardingAgent.Core.Sync;
 
@@ -81,6 +82,8 @@ public static class ApiEndpoints
         api.MapGet("/gaps", async (JsonlStore<KnowledgeGap> gaps, CancellationToken ct) => await gaps.ReadAllAsync(ct))
             .WithTags("Feedback")
             .WithSummary("Questions answered with insufficient evidence (knowledge gaps).");
+
+        api.MapProgress();
 
         api.MapPost("/admin/reindex", Reindex)
             .WithTags("Admin")
@@ -188,7 +191,7 @@ public static class ApiEndpoints
     }
 
     private static async Task<Results<Ok<ChatResponse>, ValidationProblem, ProblemHttpResult>> Chat(
-        ChatRequest request, ProjectCatalog catalog, ChatService chat, ChatOptions options, HttpContext http, ILoggerFactory loggers)
+        ChatRequest request, ProjectCatalog catalog, ChatService chat, ChatOptions options, HttpContext http, ILoggerFactory loggers, ProgressStore progress)
     {
         var (turn, errors) = PrepareTurn(request, catalog, options);
         if (turn is null)
@@ -196,6 +199,7 @@ public static class ApiEndpoints
             return TypedResults.ValidationProblem(errors);
         }
 
+        ProgressEndpoints.RecordQuestion(http.User, progress);
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(http.RequestAborted);
         timeout.CancelAfter(TimeSpan.FromSeconds(options.RequestTimeoutSeconds));
         try
@@ -221,13 +225,15 @@ public static class ApiEndpoints
     /// </summary>
     private static async Task<IResult> ChatStream(
         ChatRequest request, ProjectCatalog catalog, ChatService chat, ChatOptions options, HttpContext http, ILoggerFactory loggers,
-        IOptions<Microsoft.AspNetCore.Http.Json.JsonOptions> jsonOptions)
+        IOptions<Microsoft.AspNetCore.Http.Json.JsonOptions> jsonOptions, ProgressStore progress)
     {
         var (turn, errors) = PrepareTurn(request, catalog, options);
         if (turn is null)
         {
             return TypedResults.ValidationProblem(errors);
         }
+
+        ProgressEndpoints.RecordQuestion(http.User, progress);
 
         http.Response.ContentType = "text/event-stream";
         http.Response.Headers.CacheControl = "no-cache";
