@@ -25,7 +25,7 @@ import { SuggestionsComponent } from '../suggestions/suggestions';
     <section class="chat" [class.empty]="isEmpty()" [attr.aria-label]="i18n.t('chat.heading')">
       @if (isEmpty()) {
         <div class="welcome">
-          <span class="welcome-mark"><app-icon name="sparkles" /></span>
+          <img class="welcome-mark" src="moltres.png" width="72" height="72" alt="Moltres Agent" />
           <h1>{{ i18n.t('welcome.title') }}</h1>
           <p class="welcome-subtitle">{{ i18n.t('welcome.subtitle') }}</p>
           <p class="welcome-description">{{ i18n.t('welcome.description') }}</p>
@@ -38,7 +38,7 @@ import { SuggestionsComponent } from '../suggestions/suggestions';
               <div class="turn user-turn"><p class="user-bubble">{{ message.text }}</p></div>
             } @else {
               <div class="turn assistant-turn">
-                <span class="avatar" [attr.title]="i18n.t('chat.assistant')"><app-icon name="sparkles" /></span>
+                <img class="avatar" src="moltres.png" width="36" height="36" [attr.title]="i18n.t('chat.assistant')" alt="Moltres Agent" />
                 <div class="assistant-stack">
                   @if (message.activities.length > 0) {
                     <app-activity-feed [activities]="message.activities" />
@@ -51,7 +51,7 @@ import { SuggestionsComponent } from '../suggestions/suggestions';
 
           @if (store.asking() || store.activities().length > 0) {
             <div class="turn assistant-turn" role="status">
-              <span class="avatar"><app-icon name="sparkles" /></span>
+              <img class="avatar" src="moltres.png" width="36" height="36" alt="Moltres Agent" />
               <div class="assistant-stack">
                 <app-activity-feed
                   [activities]="store.activities()"

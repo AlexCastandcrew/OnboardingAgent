@@ -1,24 +1,39 @@
 import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { DemoAuth } from './core/demo-auth';
 import { I18n, LANGUAGES } from './core/i18n';
 import { SessionStore } from './core/session-store';
 import { AdminViewComponent } from './features/admin/admin-view';
 import { ChatComponent } from './features/chat/chat';
 import { EvidenceComponent } from './features/evidence/evidence';
+import { LoginComponent } from './features/login/login';
 import { RouteComponent } from './features/route/route';
 import { SelectionComponent } from './features/selection/selection';
 import { IconComponent } from './shared/icon';
 
 @Component({
   selector: 'app-root',
-  imports: [SelectionComponent, RouteComponent, ChatComponent, AdminViewComponent, EvidenceComponent, IconComponent],
+  imports: [SelectionComponent, RouteComponent, ChatComponent, AdminViewComponent, EvidenceComponent, IconComponent, LoginComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
-  host: { '(document:keydown.escape)': 'drawerOpen.set(false)' },
+  host: {
+    '(document:keydown.escape)': 'drawerOpen.set(false); userMenuOpen.set(false)',
+    '(document:click)': 'userMenuOpen.set(false)',
+  },
 })
 export class App {
   protected readonly store = inject(SessionStore);
   protected readonly i18n = inject(I18n);
   protected readonly languages = LANGUAGES;
+
+  private readonly auth = inject(DemoAuth);
+  protected readonly user = this.auth.user;
+  protected readonly signedIn = this.auth.signedIn;
+  protected readonly userMenuOpen = signal(false);
+
+  protected signOut(): void {
+    this.userMenuOpen.set(false);
+    this.auth.signOut();
+  }
 
   /** On small screens the context and the route live in a drawer that this opens and closes. */
   protected readonly drawerOpen = signal(false);
