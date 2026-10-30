@@ -6,11 +6,11 @@ import { SessionStore } from '../../core/session-store';
 @Component({
   selector: 'app-selection',
   template: `
-    <section class="panel menu" [attr.aria-label]="i18n.t('sel.heading')">
-      <div class="panel-heading"><h2>{{ i18n.t('sel.heading') }}</h2></div>
-      <div class="panel-body">
-      <label>
-        {{ i18n.t('sel.project') }}
+    <section class="side-section" [attr.aria-label]="i18n.t('sel.heading')">
+      <h2 class="side-title">{{ i18n.t('sel.heading') }}</h2>
+
+      <label class="field">
+        <span>{{ i18n.t('sel.project') }}</span>
         <select [value]="store.projectId() ?? ''" (change)="store.selectProject(value($event))">
           @for (p of store.projects(); track p.projectId) {
             <option [value]="p.projectId">{{ p.name }}</option>
@@ -18,8 +18,8 @@ import { SessionStore } from '../../core/session-store';
         </select>
       </label>
 
-      <label>
-        {{ i18n.t('sel.role') }}
+      <label class="field">
+        <span>{{ i18n.t('sel.role') }}</span>
         <select [value]="store.role()" (change)="store.selectRole(role($event))">
           @for (r of roles; track r.id) {
             <option [value]="r.id">{{ r.label }}</option>
@@ -27,8 +27,8 @@ import { SessionStore } from '../../core/session-store';
         </select>
       </label>
 
-      <label>
-        {{ i18n.t('sel.domain') }}
+      <label class="field">
+        <span>{{ i18n.t('sel.domain') }}</span>
         <select [value]="store.domain() ?? ''" (change)="store.selectDomain(value($event) || null)">
           <option value="">{{ i18n.t('sel.general') }}</option>
           @for (d of store.domains(); track d.domainId) {
@@ -37,8 +37,8 @@ import { SessionStore } from '../../core/session-store';
         </select>
       </label>
 
-      <label>
-        {{ i18n.t('sel.initiative') }}
+      <label class="field">
+        <span>{{ i18n.t('sel.initiative') }}</span>
         <select
           [value]="store.initiative() ?? ''"
           [disabled]="store.initiatives().length === 0"
@@ -49,7 +49,6 @@ import { SessionStore } from '../../core/session-store';
           }
         </select>
       </label>
-      </div>
     </section>
   `,
 })

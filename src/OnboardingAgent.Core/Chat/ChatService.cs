@@ -11,6 +11,16 @@ using OnboardingAgent.Core.Retrieval;
 
 namespace OnboardingAgent.Core.Chat;
 
+/// <summary>Machine-readable names of the pipeline steps reported as <see cref="ChatActivity.Step"/>.</summary>
+public static class ChatSteps
+{
+    public const string Understand = "understand_question";
+    public const string Search = "search_documents";
+    public const string Rank = "rank_passages";
+    public const string Generate = "generate_answer";
+    public const string Verify = "verify_citations";
+}
+
 /// <summary>A chat request that already passed validation, with domain and initiative in canonical form.</summary>
 public sealed record ChatTurn(
     ProjectEntry Project,
@@ -37,7 +47,11 @@ public sealed class ChatService(
     private const int RerankExcerptChars = 500;
     private const int SourceExcerptChars = 1200;
 
-    public async Task<ChatResponse> AskAsync(ChatTurn turn, CancellationToken cancellationToken)
+    /// <summary>
+    /// Runs the pipeline. <paramref name="progress"/> receives one <see cref="ChatActivity"/> each time a real step starts,
+    /// finishes or fails; it is optional and never changes the result.
+    /// </summary>
+    public async Task<ChatResponse> AskAsync(ChatTurn turn, CancellationToken cancellationToken, IProgress<ChatActivity>? progress = null)
     {
         var answerId = Guid.NewGuid();
         var started = Stopwatch.GetTimestamp();
@@ -50,18 +64,45 @@ public sealed class ChatService(
             ["Initiative"] = turn.Initiative
         });
 
-        var (searchQuery, keywords) = await RewriteAsync(turn, cancellationToken);
+        Report(progress, ChatSteps.Understand, ChatSteps.Understand, ActivityStatus.Running, "Understanding your question…");
+        var (searchQuery, keywords, rewritten) = await RewriteAsync(turn, cancellationToken);
+        Report(progress, ChatSteps.Understand, ChatSteps.Understand, rewritten ? ActivityStatus.Completed : ActivityStatus.Failed,
+            rewritten ? "Question understood" : "Could not rephrase the question; searching with your own words",
+            rewritten ? null : new ActivityDetail(Fallback: true));
+
+        Report(progress, ChatSteps.Search, ChatSteps.Search, ActivityStatus.Running, "Searching the project documentation…");
         var candidates = retriever.Search(
             new RetrievalScope(turn.Project.ProjectId, turn.Domain, turn.Initiative),
             keywords.Prepend(searchQuery).Append(turn.Message),
             focus: searchQuery + "\n" + turn.Message);
+        var found = BySourceType(candidates);
+        Report(progress, ChatSteps.Search, ChatSteps.Search, ActivityStatus.Completed,
+            candidates.Count == 0
+                ? "No related passages found"
+                : $"Found {candidates.Count} passages in {found.Sum(s => s.Documents)} documents",
+            new ActivityDetail(Candidates: candidates.Count, Sources: found));
+
+        // Writing the answer always follows, even with no passages (the answer then says the documentation does not cover it).
+        Report(progress, GenerateId(1), ChatSteps.Generate, ActivityStatus.Pending, "Writing your answer");
+
+        if (candidates.Count > 0)
+        {
+            Report(progress, ChatSteps.Rank, ChatSteps.Rank, ActivityStatus.Running, "Ranking the relevant passages…");
+        }
 
         var (context, reranked) = await RerankAsync(searchQuery, candidates, cancellationToken);
+        if (candidates.Count > 0)
+        {
+            Report(progress, ChatSteps.Rank, ChatSteps.Rank, reranked ? ActivityStatus.Completed : ActivityStatus.Failed,
+                reranked ? $"Kept {context.Count} of {candidates.Count} passages" : "Could not rank the passages; using the search order",
+                new ActivityDetail(Candidates: candidates.Count, Kept: context.Count, Fallback: reranked ? null : true, Sources: BySourceType(context)));
+        }
+
         var sources = context
             .Select((c, i) => (Id: $"S{i + 1}", Candidate: c))
             .ToList();
 
-        var (generated, attempts) = await GenerateAsync(turn, sources, cancellationToken);
+        var (generated, attempts) = await GenerateAsync(turn, sources, progress, cancellationToken);
 
         var cited = generated.CitedIds().ToHashSet(StringComparer.Ordinal);
         var response = new ChatResponse(
@@ -92,7 +133,7 @@ public sealed class ChatService(
     /// Resolves references from the history and turns the question into English plus original-language keywords,
     /// since BM25 does not cross languages. If the rewrite fails the raw question is searched instead.
     /// </summary>
-    private async Task<(string Query, IReadOnlyList<string> Keywords)> RewriteAsync(ChatTurn turn, CancellationToken cancellationToken)
+    private async Task<(string Query, IReadOnlyList<string> Keywords, bool Rewritten)> RewriteAsync(ChatTurn turn, CancellationToken cancellationToken)
     {
         var prompt = new StringBuilder();
         if (turn.History.Count > 0)
@@ -121,13 +162,13 @@ public sealed class ChatService(
             var keywords = result.TryGetProperty("keywords", out var k) && k.ValueKind == JsonValueKind.Array
                 ? k.EnumerateArray().Where(e => e.ValueKind == JsonValueKind.String).Select(e => e.GetString()!).ToList()
                 : [];
-            return (query.Length == 0 ? turn.Message : query, keywords);
+            return (query.Length == 0 ? turn.Message : query, keywords, true);
         }
         catch (LlmException ex)
         {
             logger.LogWarning(ex, "[Chat] Query rewrite failed, searching the raw question of {Length} characters with {HistoryItems} history items",
                 turn.Message.Length, turn.History.Count);
-            return (turn.Message, []);
+            return (turn.Message, [], false);
         }
     }
 
@@ -189,7 +230,7 @@ public sealed class ChatService(
     }
 
     private async Task<(GeneratedAnswer Answer, int Attempts)> GenerateAsync(
-        ChatTurn turn, IReadOnlyList<(string Id, Candidate Candidate)> sources, CancellationToken cancellationToken)
+        ChatTurn turn, IReadOnlyList<(string Id, Candidate Candidate)> sources, IProgress<ChatActivity>? progress, CancellationToken cancellationToken)
     {
         var allowed = sources.Select(s => s.Id).ToHashSet(StringComparer.Ordinal);
         var userTurn = BuildUserTurn(turn, sources);
@@ -202,24 +243,60 @@ public sealed class ChatService(
                 : userTurn + $"\n\nYour previous answer was rejected: {rejection} Answer again following the rules.";
             var messages = MergeTurns(turn.History.Append(new ClaudeMessage("user", text)));
 
-            var result = await claude.InvokeStructuredAsync(
-                new ClaudeStructuredCall(ModelTier.Answer, Prompts.AnswerSystem(turn.Project.Name, turn.Language), messages,
-                    Prompts.AnswerSchemaName, "Submit the answer, its evidence status and its claims with source ids.", Prompts.AnswerSchema),
-                cancellationToken);
+            Report(progress, GenerateId(attempt), ChatSteps.Generate, ActivityStatus.Running,
+                attempt == 1 ? "Writing your answer…" : "Writing the answer again with valid citations…", new ActivityDetail(Attempt: attempt));
+            JsonElement result;
+            try
+            {
+                result = await claude.InvokeStructuredAsync(
+                    new ClaudeStructuredCall(ModelTier.Answer, Prompts.AnswerSystem(turn.Project.Name, turn.Language), messages,
+                        Prompts.AnswerSchemaName, "Submit the answer, its evidence status and its claims with source ids.", Prompts.AnswerSchema),
+                    cancellationToken);
+            }
+            catch (LlmException)
+            {
+                Report(progress, GenerateId(attempt), ChatSteps.Generate, ActivityStatus.Failed, "Could not write the answer", new ActivityDetail(Attempt: attempt));
+                throw;
+            }
 
+            Report(progress, GenerateId(attempt), ChatSteps.Generate, ActivityStatus.Completed, "Answer written", new ActivityDetail(Attempt: attempt));
+
+            Report(progress, VerifyId(attempt), ChatSteps.Verify, ActivityStatus.Running, "Verifying the citations…", new ActivityDetail(Attempt: attempt));
             var generated = GeneratedAnswer.Parse(result);
             rejection = generated is null ? "The tool input did not match the schema." : generated.Validate(allowed);
             if (rejection is null)
             {
-                return (generated!, attempt);
+                var cited = generated!.CitedIds().Distinct(StringComparer.Ordinal).Count();
+                Report(progress, VerifyId(attempt), ChatSteps.Verify, ActivityStatus.Completed, $"{cited} citations verified",
+                    new ActivityDetail(Attempt: attempt, Cited: cited));
+                return (generated, attempt);
             }
 
+            Report(progress, VerifyId(attempt), ChatSteps.Verify, ActivityStatus.Failed,
+                attempt < MaxGenerationAttempts ? "A citation did not match the retrieved passages; trying again" : "A citation did not match the retrieved passages",
+                new ActivityDetail(Attempt: attempt));
             logger.LogWarning("[Chat] Answer attempt {Attempt} rejected: {Reason} Allowed ids: {Allowed}",
                 attempt, rejection, string.Join(",", allowed));
         }
 
         throw new LlmException($"The model returned an answer with invalid citations twice. {rejection}");
     }
+
+    private void Report(IProgress<ChatActivity>? progress, string id, string step, ActivityStatus status, string message, ActivityDetail? detail = null) =>
+        progress?.Report(new ChatActivity(id, step, status, message, clock.GetUtcNow(), detail));
+
+    private static string GenerateId(int attempt) => $"{ChatSteps.Generate}-{attempt}";
+
+    private static string VerifyId(int attempt) => $"{ChatSteps.Verify}-{attempt}";
+
+    /// <summary>Documents and passages per source type, most passages first: the "where did this come from" of a step.</summary>
+    private static IReadOnlyList<SourceTypeCount> BySourceType(IReadOnlyList<Candidate> candidates) =>
+        candidates
+            .GroupBy(c => c.Hit.SourceType, StringComparer.Ordinal)
+            .Select(g => new SourceTypeCount(g.Key, g.Select(c => c.Hit.DocumentId).Distinct(StringComparer.Ordinal).Count(), g.Count()))
+            .OrderByDescending(s => s.Passages)
+            .ThenBy(s => s.SourceType, StringComparer.Ordinal)
+            .ToList();
 
     private static string BuildUserTurn(ChatTurn turn, IReadOnlyList<(string Id, Candidate Candidate)> sources)
     {

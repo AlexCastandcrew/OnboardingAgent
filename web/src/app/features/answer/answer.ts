@@ -1,8 +1,11 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { I18n, TranslationKey } from '../../core/i18n';
 import { Inline, parseAnswer } from '../../core/markdown';
 import { ChatResponse, EvidenceStatus } from '../../core/models';
 import { SessionStore } from '../../core/session-store';
+import { describeSource } from '../../core/source-info';
+import { IconComponent } from '../../shared/icon';
+import { SourceBadgeComponent } from '../../shared/source-badge';
 
 const STATUS_KEY: Record<EvidenceStatus, TranslationKey> = {
   supported: 'answer.supported',
@@ -23,7 +26,7 @@ export class InlineComponent {
 
 @Component({
   selector: 'app-answer',
-  imports: [InlineComponent],
+  imports: [InlineComponent, SourceBadgeComponent, IconComponent],
   template: `
     <article class="answer" [class]="'status-' + response().evidenceStatus">
       <p class="status">{{ label() }}</p>
@@ -49,14 +52,39 @@ export class InlineComponent {
       </div>
 
       @if (response().sources.length > 0) {
-        <ul class="sources">
-          @for (source of response().sources; track source.id) {
-            <li>
-              <button type="button" class="chip" (click)="store.openEvidence(source)">{{ source.id }}</button>
-              {{ source.title }} · <span class="muted">{{ source.section }}</span>
-            </li>
-          }
-        </ul>
+        <button type="button" class="sources-toggle" [attr.aria-expanded]="sourcesOpen()" (click)="sourcesOpen.set(!sourcesOpen())">
+          <app-icon name="chevron-down" [class.chevron-open]="sourcesOpen()" />
+          <span>{{ i18n.t('answer.sources') }}</span>
+          <span class="muted">{{ i18n.t('answer.sourceCount', { n: response().sources.length }) }}</span>
+        </button>
+        @if (sourcesOpen()) {
+          <ul class="sources">
+            @for (item of sources(); track item.source.id) {
+              <li>
+                <button type="button" class="chip" (click)="store.openEvidence(item.source)">{{ item.source.id }}</button>
+                <div class="source-body">
+                  <div class="source-head">
+                    <app-source-badge [type]="item.source.sourceType" />
+                    <strong>{{ item.source.title }}</strong>
+                  </div>
+                  <p class="muted source-meta">
+                    @if (item.info.platform) { <span>{{ item.info.platform }}</span> · }
+                    @if (item.info.path) { <code>{{ item.info.path }}</code> · }
+                    <span>{{ item.source.section }}</span>
+                  </p>
+                  <p class="source-actions">
+                    <button type="button" class="source-link" (click)="store.openEvidence(item.source)">{{ i18n.t('answer.sourceOpen') }}</button>
+                    @if (item.info.link; as link) {
+                      <a [href]="link" target="_blank" rel="noopener noreferrer">{{ i18n.t('answer.sourceExternal') }}</a>
+                    } @else {
+                      <span class="muted">{{ i18n.t('answer.sourceNoLink') }}</span>
+                    }
+                  </p>
+                </div>
+              </li>
+            }
+          </ul>
+        }
       }
 
       <div class="feedback">
@@ -76,6 +104,8 @@ export class AnswerComponent {
 
   readonly response = input.required<ChatResponse>();
 
+  protected readonly sourcesOpen = signal(true);
+  protected readonly sources = computed(() => this.response().sources.map((source) => ({ source, info: describeSource(source) })));
   protected readonly label = computed(() => this.i18n.t(STATUS_KEY[this.response().evidenceStatus]));
   protected readonly blocks = computed(() => parseAnswer(this.response().answer, this.response().sources));
 }

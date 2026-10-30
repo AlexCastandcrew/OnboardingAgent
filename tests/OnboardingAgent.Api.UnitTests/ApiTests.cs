@@ -73,6 +73,80 @@ public class ApiTests
     }
 
     [Fact]
+    public async Task Knowledge_KnownProject_ReturnsWhatTheIndexHoldsAndUnknownIs404()
+    {
+        using var factory = new ApiFactory();
+        using var client = factory.ClientFor("ana");
+
+        using var known = await client.GetAsync("/api/projects/htg/knowledge");
+        using var body = JsonDocument.Parse(await known.Content.ReadAsStringAsync());
+        using var unknown = await client.GetAsync("/api/projects/nope/knowledge");
+
+        Assert.Equal(HttpStatusCode.OK, known.StatusCode);
+        Assert.Equal(1, body.RootElement.GetProperty("documents").GetInt32());
+        Assert.True(body.RootElement.GetProperty("passages").GetInt32() >= 1);
+        Assert.Equal("manual", body.RootElement.GetProperty("sourceTypes")[0].GetProperty("sourceType").GetString());
+        Assert.Equal(0, body.RootElement.GetProperty("repositories").GetArrayLength());
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+    }
+
+    [Fact]
+    public async Task ChatStream_ValidToken_StreamsTheRealStepsThenTheSameAnswerAsChat()
+    {
+        using var factory = new ApiFactory();
+        using var client = factory.ClientFor("ana");
+
+        using var response = await client.PostAsJsonAsync("/api/chat/stream", Question);
+        var events = ParseEvents(await response.Content.ReadAsStringAsync());
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+        Assert.Equal("response", events[^1].Name);
+        Assert.All(events[..^1], e => Assert.Equal("activity", e.Name));
+        Assert.Equal("understand_question", events[0].Data.GetProperty("step").GetString());
+        Assert.Equal("running", events[0].Data.GetProperty("status").GetString());
+        Assert.Equal("supported", events[^1].Data.GetProperty("evidenceStatus").GetString());
+        Assert.Equal("teams", events[^1].Data.GetProperty("sources")[0].GetProperty("documentId").GetString());
+        var ids = events[..^1].Select(e => $"{e.Data.GetProperty("id").GetString()}:{e.Data.GetProperty("status").GetString()}").ToList();
+        Assert.Equal(ids.Count, ids.Distinct().Count());
+    }
+
+    [Fact]
+    public async Task ChatStream_ModelFails_EndsWithAnErrorEventNotAnInsufficientAnswer()
+    {
+        using var factory = new ApiFactory();
+        factory.Claude.FailAnswer = true;
+        using var client = factory.ClientFor("ana");
+
+        using var response = await client.PostAsJsonAsync("/api/chat/stream", Question);
+        var events = ParseEvents(await response.Content.ReadAsStringAsync());
+
+        Assert.Equal("error", events[^1].Name);
+        Assert.Equal(502, events[^1].Data.GetProperty("status").GetInt32());
+        Assert.DoesNotContain(events, e => e.Name == "response");
+        Assert.Contains(events, e => e.Name == "activity" && e.Data.GetProperty("status").GetString() == "failed");
+    }
+
+    [Fact]
+    public async Task ChatStream_InvalidRequest_Returns400BeforeTheStreamStarts()
+    {
+        using var factory = new ApiFactory();
+        using var client = factory.ClientFor("ana");
+
+        using var response = await client.PostAsJsonAsync("/api/chat/stream", new { projectId = "htg", role = "intern", message = "Hi" });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    private static List<(string Name, JsonElement Data)> ParseEvents(string body) =>
+        body.Split("\n\n", StringSplitOptions.RemoveEmptyEntries)
+            .Select(block => block.Split('\n'))
+            .Select(lines => (Name: lines.Single(l => l.StartsWith("event: ", StringComparison.Ordinal))[7..],
+                              Data: JsonDocument.Parse(lines.Single(l => l.StartsWith("data: ", StringComparison.Ordinal))[6..]).RootElement.Clone()))
+            .ToList();
+
+    [Fact]
     public async Task Chat_ModelFails_Returns502ProblemInsteadOfInsufficient()
     {
         using var factory = new ApiFactory();

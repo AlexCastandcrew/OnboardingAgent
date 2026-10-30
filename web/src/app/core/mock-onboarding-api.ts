@@ -1,14 +1,17 @@
 import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, delay, of, throwError } from 'rxjs';
+import { Observable, concat, concatMap, delay, from, of, throwError } from 'rxjs';
 import { Language } from './i18n';
 import {
+  ChatActivity,
   ChatRequest,
   ChatResponse,
+  ChatStreamEvent,
   DocumentView,
   DomainSummary,
   FeedbackRequest,
   HealthResponse,
+  KnowledgeSummary,
   OnboardingRoute,
   OnboardingStep,
   ProjectSummary,
@@ -149,7 +152,12 @@ function answerFor(request: ChatRequest): ChatResponse {
   };
 }
 
-/** Fixtures for working without the backend. A message containing "[error]" fails with a 502 to show the retry UI. */
+/** Emits each event, built at the moment it is emitted, with a short pause before it. */
+function emit(steps: readonly (() => ChatStreamEvent)[]): Observable<ChatStreamEvent> {
+  return from(steps).pipe(concatMap((build) => of(build()).pipe(delay(400))));
+}
+
+/** Fixtures for working without the backend. */
 @Injectable()
 export class MockOnboardingApi extends OnboardingApi {
   health(): Observable<HealthResponse> {
@@ -173,20 +181,71 @@ export class MockOnboardingApi extends OnboardingApi {
     }))).pipe(delay(200));
   }
 
+  knowledge(projectId: string): Observable<KnowledgeSummary> {
+    return of<KnowledgeSummary>({
+      projectId,
+      documents: 21,
+      passages: 231,
+      lastIndexedAt: '2026-10-29T14:04:33Z',
+      sourceTypes: [
+        { sourceType: 'repo', documents: 9, passages: 120 },
+        { sourceType: 'confluence', documents: 5, passages: 60 },
+        { sourceType: 'jira', documents: 5, passages: 30 },
+        { sourceType: 'manual', documents: 2, passages: 21 },
+      ],
+      repositories: [{ name: 'cast-and-crew/htg-server', url: 'https://github.com/cast-and-crew/htg-server', documents: 9, version: 'e570f4474d' }],
+      teams: 3,
+      initiatives: 9,
+    }).pipe(delay(250));
+  }
+
   onboarding(projectId: string, role: Role, language: Language, domain?: string, initiative?: string): Observable<OnboardingRoute> {
     return of<OnboardingRoute>({ projectId, role, domain: domain ?? null, initiative: initiative ?? null, steps: steps(role, language) }).pipe(delay(300));
   }
 
-  chat(request: ChatRequest): Observable<ChatResponse> {
-    if (request.message.includes('[error]')) {
-      return throwError(() => new HttpErrorResponse({
-        status: 502,
-        headers: new HttpHeaders(),
-        error: { title: 'El modelo no pudo responder. Reintenta.' },
-      })).pipe(delay(LATENCY_MS));
+  /**
+   * Scripted steps for working without the backend: the pauses between them are the mock's only timers, there is no
+   * real work behind them. A message containing "[error]" fails at the ranking step with a 502.
+   */
+  chatStream(request: ChatRequest): Observable<ChatStreamEvent> {
+    const none = /presupuesto|budget/i.test(request.message);
+    const fails = request.message.includes('[error]');
+    const step = (id: string, stepName: string, status: ChatActivity['status'], message: string, detail?: ChatActivity['detail']) => (): ChatStreamEvent => ({
+      type: 'activity',
+      activity: { id, step: stepName, status, message, timestamp: new Date().toISOString(), detail },
+    });
+    const sources = none ? [] : [
+      { sourceType: 'confluence', documents: 2, passages: 3 },
+      { sourceType: 'jira', documents: 1, passages: 2 },
+      { sourceType: 'repo', documents: 1, passages: 1 },
+    ];
+    const candidates = sources.reduce((sum, s) => sum + s.passages, 0);
+
+    const steps: (() => ChatStreamEvent)[] = [
+      step('understand_question', 'understand_question', 'running', 'Understanding your question…'),
+      step('understand_question', 'understand_question', 'completed', 'Question understood'),
+      step('search_documents', 'search_documents', 'running', 'Searching the project documentation…'),
+      step('search_documents', 'search_documents', 'completed', 'Found passages', { candidates, sources }),
+      step('generate_answer-1', 'generate_answer', 'pending', 'Writing your answer'),
+    ];
+    if (candidates > 0) {
+      steps.push(step('rank_passages', 'rank_passages', 'running', 'Ranking the relevant passages…'));
+    }
+    if (fails) {
+      return concat(emit(steps), throwError(() => new HttpErrorResponse({ status: 502, headers: new HttpHeaders(), error: { title: 'The model could not answer. Try again.' } })));
     }
 
-    return of(answerFor(request)).pipe(delay(LATENCY_MS));
+    if (candidates > 0) {
+      steps.push(step('rank_passages', 'rank_passages', 'completed', 'Kept passages', { candidates, kept: 4, sources }));
+    }
+    steps.push(
+      step('generate_answer-1', 'generate_answer', 'running', 'Writing your answer…', { attempt: 1 }),
+      step('generate_answer-1', 'generate_answer', 'completed', 'Answer written', { attempt: 1 }),
+      step('verify_citations-1', 'verify_citations', 'running', 'Verifying the citations…', { attempt: 1 }),
+      step('verify_citations-1', 'verify_citations', 'completed', 'Citations verified', { attempt: 1, cited: none ? 0 : 1 }),
+      (): ChatStreamEvent => ({ type: 'response', response: answerFor(request) }),
+    );
+    return emit(steps);
   }
 
   document(): Observable<DocumentView> {

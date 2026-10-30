@@ -1,5 +1,9 @@
 using System.Net;
+using System.Text.Json;
+using System.Threading.Channels;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Options;
 using OnboardingAgent.Api.RateLimiting;
 using OnboardingAgent.Core.Catalog;
 using OnboardingAgent.Core.Chat;
@@ -35,6 +39,11 @@ public static class ApiEndpoints
             .WithSummary("Domains (teams) of a project, each with its initiatives (Jira epics).")
             .ProducesProblem(StatusCodes.Status404NotFound);
 
+        api.MapGet("/projects/{projectId}/knowledge", Knowledge)
+            .WithTags("Catalog")
+            .WithSummary("What the index holds for a project: documents, passages, source types, repositories, teams and initiatives.")
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
         api.MapGet("/onboarding/{projectId}/{role}", Onboarding)
             .WithTags("Onboarding")
             .WithSummary("The four-step onboarding route for a role, optionally narrowed to a domain and initiative.")
@@ -49,6 +58,15 @@ public static class ApiEndpoints
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .ProducesProblem(StatusCodes.Status502BadGateway)
             .ProducesProblem(StatusCodes.Status504GatewayTimeout);
+
+        api.MapPost("/chat/stream", ChatStream)
+            .RequireRateLimiting(ChatRateLimit.Policy)
+            .WithTags("Chat")
+            .WithSummary("Same as /api/chat, streamed as Server-Sent Events with the real steps of the pipeline.")
+            .WithDescription("Events: activity (a step started, finished or failed; same id, new status), then response (the full chat answer) or error. Validation, 401 and 429 are normal HTTP responses before the stream.")
+            .Produces(StatusCodes.Status200OK, contentType: "text/event-stream")
+            .ProducesValidationProblem()
+            .ProducesProblem(StatusCodes.Status429TooManyRequests);
 
         api.MapGet("/documents/{documentId}", Document)
             .WithTags("Evidence")
@@ -103,6 +121,14 @@ public static class ApiEndpoints
             : TypedResults.Ok(catalog.Domains(project, Languages.Normalize(language)));
     }
 
+    private static Results<Ok<KnowledgeSummary>, ProblemHttpResult> Knowledge(string projectId, ProjectCatalog catalog, KnowledgeIndex index)
+    {
+        var project = catalog.Find(projectId);
+        return project is null
+            ? TypedResults.Problem($"Unknown project '{projectId}'.", statusCode: StatusCodes.Status404NotFound)
+            : TypedResults.Ok(KnowledgeSummaryBuilder.Build(project, index.GetDocuments(project.ProjectId), index.GetChunkCounts(project.ProjectId)));
+    }
+
     private static Results<Ok<OnboardingRoute>, ValidationProblem> Onboarding(
         string projectId, string role, string? domain, string? initiative, string? language, ProjectCatalog catalog, OnboardingService onboarding)
     {
@@ -121,8 +147,8 @@ public static class ApiEndpoints
 
     private static readonly string LanguageError = $"Language must be one of: {string.Join(", ", Languages.All)}.";
 
-    private static async Task<Results<Ok<ChatResponse>, ValidationProblem, ProblemHttpResult>> Chat(
-        ChatRequest request, ProjectCatalog catalog, ChatService chat, ChatOptions options, HttpContext http, ILoggerFactory loggers)
+    /// <summary>Validates a chat request (shared by the JSON and the streaming endpoints) and builds the turn, or returns the field errors.</summary>
+    private static (ChatTurn? Turn, IDictionary<string, string[]> Errors) PrepareTurn(ChatRequest request, ProjectCatalog catalog, ChatOptions options)
     {
         var role = request.Role?.ToLowerInvariant();
         var scope = catalog.Validate(request.ProjectId, role, request.Domain, request.Initiative);
@@ -146,7 +172,7 @@ public static class ApiEndpoints
 
         if (errors.Count > 0)
         {
-            return TypedResults.ValidationProblem(errors);
+            return (null, errors);
         }
 
         // History comes from the client: keep only the last items, only user/assistant roles, and cap each one.
@@ -158,12 +184,23 @@ public static class ApiEndpoints
                 : h.Content[..options.MaxHistoryItemChars].Trim()))
             .ToList();
 
+        return (new ChatTurn(scope.Project!, role!, scope.Domain, scope.Initiative, message, history, language), errors);
+    }
+
+    private static async Task<Results<Ok<ChatResponse>, ValidationProblem, ProblemHttpResult>> Chat(
+        ChatRequest request, ProjectCatalog catalog, ChatService chat, ChatOptions options, HttpContext http, ILoggerFactory loggers)
+    {
+        var (turn, errors) = PrepareTurn(request, catalog, options);
+        if (turn is null)
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(http.RequestAborted);
         timeout.CancelAfter(TimeSpan.FromSeconds(options.RequestTimeoutSeconds));
         try
         {
-            return TypedResults.Ok(await chat.AskAsync(
-                new ChatTurn(scope.Project!, role!, scope.Domain, scope.Initiative, message, history, language), timeout.Token));
+            return TypedResults.Ok(await chat.AskAsync(turn, timeout.Token));
         }
         catch (LlmException ex)
         {
@@ -171,12 +208,91 @@ public static class ApiEndpoints
         }
         catch (OperationCanceledException) when (!http.RequestAborted.IsCancellationRequested)
         {
-            loggers.CreateLogger("Chat").LogWarning(
-                "[Chat] Timed out after {Seconds} s for project {ProjectId} role {Role} domain {Domain} initiative {Initiative}",
-                options.RequestTimeoutSeconds, scope.Project!.ProjectId, role, scope.Domain, scope.Initiative);
+            LogTimeout(loggers, options, turn);
             return TypedResults.Problem($"No answer within {options.RequestTimeoutSeconds} seconds.", title: "The answer took too long. Try again.",
                 statusCode: StatusCodes.Status504GatewayTimeout);
         }
+    }
+
+    /// <summary>
+    /// Same question and same pipeline as <see cref="Chat"/>, answered as Server-Sent Events: one <c>activity</c> event each
+    /// time a real step starts, finishes or fails, then one <c>response</c> event with the full answer (or one <c>error</c>
+    /// event). Validation, authentication and rate-limit failures happen before the stream starts and keep their HTTP status.
+    /// </summary>
+    private static async Task<IResult> ChatStream(
+        ChatRequest request, ProjectCatalog catalog, ChatService chat, ChatOptions options, HttpContext http, ILoggerFactory loggers,
+        IOptions<Microsoft.AspNetCore.Http.Json.JsonOptions> jsonOptions)
+    {
+        var (turn, errors) = PrepareTurn(request, catalog, options);
+        if (turn is null)
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        http.Response.ContentType = "text/event-stream";
+        http.Response.Headers.CacheControl = "no-cache";
+        http.Response.Headers["X-Accel-Buffering"] = "no";
+        http.Features.Get<IHttpResponseBodyFeature>()?.DisableBuffering();
+        var json = jsonOptions.Value.SerializerOptions;
+
+        var activities = Channel.CreateUnbounded<ChatActivity>(new UnboundedChannelOptions { SingleReader = true, SingleWriter = true });
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(http.RequestAborted);
+        timeout.CancelAfter(TimeSpan.FromSeconds(options.RequestTimeoutSeconds));
+        var work = Task.Run(async () =>
+        {
+            try
+            {
+                return await chat.AskAsync(turn, timeout.Token, new ChannelProgress(activities.Writer));
+            }
+            finally
+            {
+                activities.Writer.TryComplete();
+            }
+        });
+
+        try
+        {
+            await foreach (var activity in activities.Reader.ReadAllAsync(http.RequestAborted))
+            {
+                await WriteEventAsync(http, "activity", activity, json);
+            }
+
+            await WriteEventAsync(http, "response", await work, json);
+        }
+        catch (LlmException ex)
+        {
+            await WriteEventAsync(http, "error", new ChatStreamError(StatusCodes.Status502BadGateway, "The model could not answer. Try again.", ex.Message), json);
+        }
+        catch (OperationCanceledException) when (!http.RequestAborted.IsCancellationRequested)
+        {
+            LogTimeout(loggers, options, turn);
+            await WriteEventAsync(http, "error",
+                new ChatStreamError(StatusCodes.Status504GatewayTimeout, "The answer took too long. Try again.", $"No answer within {options.RequestTimeoutSeconds} seconds."), json);
+        }
+        catch (OperationCanceledException)
+        {
+            // The client left (new conversation, another selection or a closed tab): the linked token already stopped the work.
+            await work.ContinueWith(static _ => { }, TaskScheduler.Default);
+        }
+
+        return TypedResults.Empty;
+    }
+
+    private static void LogTimeout(ILoggerFactory loggers, ChatOptions options, ChatTurn turn) =>
+        loggers.CreateLogger("Chat").LogWarning(
+            "[Chat] Timed out after {Seconds} s for project {ProjectId} role {Role} domain {Domain} initiative {Initiative}",
+            options.RequestTimeoutSeconds, turn.Project.ProjectId, turn.Role, turn.Domain, turn.Initiative);
+
+    private static async Task WriteEventAsync<T>(HttpContext http, string name, T data, JsonSerializerOptions json)
+    {
+        await http.Response.WriteAsync($"event: {name}\ndata: {JsonSerializer.Serialize(data, json)}\n\n", http.RequestAborted);
+        await http.Response.Body.FlushAsync(http.RequestAborted);
+    }
+
+    /// <summary>Hands the activities reported by the pipeline to the stream writer without blocking the pipeline.</summary>
+    private sealed class ChannelProgress(ChannelWriter<ChatActivity> writer) : IProgress<ChatActivity>
+    {
+        public void Report(ChatActivity value) => writer.TryWrite(value);
     }
 
     private static Results<Ok<DocumentView>, ProblemHttpResult> Document(string documentId, KnowledgeIndex index)

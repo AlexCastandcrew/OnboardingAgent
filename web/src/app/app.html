@@ -1,4 +1,8 @@
-<header class="navbar">
+<header class="topbar">
+  <button type="button" class="menu-button" [attr.aria-label]="i18n.t('app.openMenu')" [attr.aria-expanded]="drawerOpen()" (click)="drawerOpen.set(true)">
+    <app-icon name="menu" />
+  </button>
+
   <div class="brand" role="img" aria-label="Moltres Agent, powered by Cast &amp; Crew">
     <span class="brand-name">Moltres Agent</span>
     <svg class="brand-cross" viewBox="0 0 24 24" aria-hidden="true">
@@ -7,10 +11,12 @@
     </svg>
     <span class="brand-powered">Powered by <strong>Cast &amp; Crew</strong></span>
   </div>
-  <div class="title">
+
+  <div class="product">
     <strong>AI Team Onboarding</strong>
-    <span class="muted">{{ i18n.t('app.subtitle') }}</span>
+    <span>{{ i18n.t('app.tagline') }}</span>
   </div>
+
   <div class="language" role="group" [attr.aria-label]="i18n.t('lang.label')">
     @for (option of languages; track option.id) {
       <button
@@ -24,15 +30,25 @@
 </header>
 
 @if (store.healthWarning()) {
-  <p class="error" role="alert">{{ i18n.t('app.healthWarning') }}</p>
+  <p class="banner-error" role="alert">{{ i18n.t('app.healthWarning') }}</p>
 }
 
-<main class="layout">
-  <div class="left">
+<div class="layout">
+  @if (drawerOpen()) {
+    <div class="backdrop" (click)="drawerOpen.set(false)"></div>
+  }
+
+  <aside class="sidebar" [class.open]="drawerOpen()" [attr.aria-label]="i18n.t('sel.heading')">
+    <button type="button" class="drawer-close" [attr.aria-label]="i18n.t('app.closeMenu')" (click)="drawerOpen.set(false)">
+      <app-icon name="x" />
+    </button>
     <app-selection />
     <app-route />
-  </div>
-  <app-chat />
-</main>
+  </aside>
+
+  <main class="main">
+    <app-chat />
+  </main>
+</div>
 
 <app-evidence />

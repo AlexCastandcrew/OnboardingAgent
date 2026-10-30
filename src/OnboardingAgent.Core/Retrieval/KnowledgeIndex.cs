@@ -276,6 +276,27 @@ public sealed class KnowledgeIndex
         return result;
     }
 
+    /// <summary>Document id → number of indexed passages, for every document of the project.</summary>
+    public IReadOnlyDictionary<string, int> GetChunkCounts(string projectId)
+    {
+        using var connection = Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT d.document_id, COUNT(c.chunk_id)
+            FROM documents d LEFT JOIN chunks c ON c.document_id = d.document_id
+            WHERE d.project_id = $p GROUP BY d.document_id
+            """;
+        command.Parameters.AddWithValue("$p", projectId);
+        using var reader = command.ExecuteReader();
+        var result = new Dictionary<string, int>(StringComparer.Ordinal);
+        while (reader.Read())
+        {
+            result[reader.GetString(0)] = reader.GetInt32(1);
+        }
+
+        return result;
+    }
+
     public IReadOnlyList<(string ChunkId, string Section)> GetSections(string documentId)
     {
         using var connection = Open();

@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Subscription, finalize, firstValueFrom } from 'rxjs';
+import { ActivityView, applyActivity, failUnfinished } from './activity';
 import { ApiError, toApiError } from './api-error';
 import { ChatMessage, buildHistory } from './history';
 import { I18n, Language } from './i18n';
@@ -8,12 +9,33 @@ import {
   DocumentView,
   DomainSummary,
   HealthResponse,
+  KnowledgeSummary,
   MAX_MESSAGE_CHARS,
   OnboardingRoute,
   ProjectSummary,
   Role,
 } from './models';
 import { ONBOARDING_API } from './onboarding-api';
+import { ProgressState, computeProgress, contextKey, recommend, stepOfQuestion, toggleDone } from './progress';
+
+const PROGRESS_STORAGE_KEY = 'onboarding.progress.v1';
+
+function loadProgress(): ProgressState {
+  try {
+    const parsed: unknown = JSON.parse(localStorage.getItem(PROGRESS_STORAGE_KEY) ?? '{}');
+    return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed) ? (parsed as ProgressState) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveProgress(state: ProgressState): void {
+  try {
+    localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage full or blocked: progress then lasts only for this session.
+  }
+}
 
 export interface InitiativeOption {
   initiativeId: string;
@@ -51,10 +73,26 @@ export class SessionStore {
   readonly asking = signal(false);
   readonly askingSince = signal<number | null>(null);
   readonly chatError = signal<ApiError | null>(null);
+  /** What the agent is doing for the question in flight (or did before it failed). Moves into the answer when it arrives. */
+  readonly activities = signal<ActivityView[]>([]);
   private lastQuestion: string | null = null;
+  private inFlight: Subscription | null = null;
+  /** Identifies the request whose result may still touch the state: a cancelled or replaced one must not. */
+  private requestId = 0;
 
   readonly evidence = signal<EvidenceState | null>(null);
   readonly feedback = signal<Record<string, boolean>>({});
+
+  /** What the index holds for the selected project; null while loading or when the call failed (the card says so). */
+  readonly knowledge = signal<KnowledgeSummary | null>(null);
+  readonly knowledgeFailed = signal(false);
+
+  private readonly progressState = signal<ProgressState>(loadProgress());
+  private readonly doneKeys = computed(() => this.progressState()[this.progressKey()] ?? []);
+  private readonly progressKey = computed(() => contextKey(this.projectId() ?? '', this.role(), this.domain(), this.initiative()));
+  readonly doneSteps = this.doneKeys;
+  readonly progress = computed(() => computeProgress(this.route(), this.doneKeys()));
+  readonly recommendations = computed(() => recommend(this.route(), this.doneKeys()));
 
   /** With a team selected, that team's initiatives; with "General", the initiatives of every team. */
   readonly initiatives = computed<InitiativeOption[]>(() =>
@@ -91,7 +129,32 @@ export class SessionStore {
       return;
     }
 
+    void this.loadKnowledge(projectId);
     await this.reload();
+  }
+
+  private async loadKnowledge(projectId: string): Promise<void> {
+    this.knowledge.set(null);
+    this.knowledgeFailed.set(false);
+    try {
+      const knowledge = await firstValueFrom(this.api.knowledge(projectId));
+      if (this.projectId() === projectId) {
+        this.knowledge.set(knowledge);
+      }
+    } catch {
+      if (this.projectId() === projectId) {
+        this.knowledgeFailed.set(true);
+      }
+    }
+  }
+
+  toggleStepDone(stepKey: string): void {
+    this.setProgress(toggleDone(this.progressState(), this.progressKey(), stepKey));
+  }
+
+  private setProgress(state: ProgressState): void {
+    this.progressState.set(state);
+    saveProgress(state);
   }
 
   async selectRole(role: Role): Promise<void> {
@@ -173,7 +236,23 @@ export class SessionStore {
     }
   }
 
+  /** Clears the conversation and any open evidence; the project, role, team, initiative and language stay. */
+  newConversation(): void {
+    this.resetConversation();
+  }
+
+  /** Stops the question in flight, if any: closes its stream (the server stops its work) and forgets its activities. */
+  private cancelInFlight(): void {
+    this.requestId++;
+    this.inFlight?.unsubscribe();
+    this.inFlight = null;
+    this.asking.set(false);
+    this.askingSince.set(null);
+    this.activities.set([]);
+  }
+
   private resetConversation(): void {
+    this.cancelInFlight();
     this.messages.set([]);
     this.chatError.set(null);
     this.lastQuestion = null;
@@ -190,6 +269,12 @@ export class SessionStore {
   async ask(text: string): Promise<void> {
     if (!this.canAsk(text)) {
       return;
+    }
+
+    // Asking a question the route suggests for a step counts as doing that step.
+    const step = stepOfQuestion(this.route(), text.trim());
+    if (step && !this.doneKeys().includes(step.key)) {
+      this.toggleStepDone(step.key);
     }
 
     const history = buildHistory(this.messages());
@@ -212,12 +297,16 @@ export class SessionStore {
       return;
     }
 
+    const id = ++this.requestId;
     this.lastQuestion = message;
     this.chatError.set(null);
+    this.activities.set([]);
     this.asking.set(true);
     this.askingSince.set(Date.now());
-    try {
-      const response = await firstValueFrom(this.api.chat({
+
+    await new Promise<void>((resolve) => {
+      // finalize also runs when the stream is cancelled, so this promise always settles.
+      this.inFlight = this.api.chatStream({
         projectId,
         domain: this.domain() ?? undefined,
         initiative: this.initiative() ?? undefined,
@@ -225,12 +314,31 @@ export class SessionStore {
         language: this.i18n.language(),
         message,
         history,
-      }));
-      this.messages.update((m) => [...m, { kind: 'assistant', response }]);
-      this.lastQuestion = null;
-    } catch (error) {
-      this.chatError.set(toApiError(error, this.i18n.t));
-    } finally {
+      }).pipe(finalize(resolve)).subscribe({
+        next: (event) => {
+          if (id !== this.requestId) {
+            return;
+          }
+
+          if (event.type === 'activity') {
+            this.activities.update((list) => applyActivity(list, event.activity));
+          } else {
+            this.messages.update((m) => [...m, { kind: 'assistant', response: event.response, activities: this.activities() }]);
+            this.activities.set([]);
+            this.lastQuestion = null;
+          }
+        },
+        error: (error) => {
+          if (id === this.requestId) {
+            this.activities.update(failUnfinished);
+            this.chatError.set(toApiError(error, this.i18n.t));
+          }
+        },
+      });
+    });
+
+    if (id === this.requestId) {
+      this.inFlight = null;
       this.asking.set(false);
       this.askingSince.set(null);
     }

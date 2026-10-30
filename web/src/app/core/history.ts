@@ -1,8 +1,9 @@
+import { ActivityView } from './activity';
 import { ChatHistoryItem, ChatResponse, MAX_HISTORY_ITEMS } from './models';
 
 export type ChatMessage =
   | { kind: 'user'; text: string }
-  | { kind: 'assistant'; response: ChatResponse };
+  | { kind: 'assistant'; response: ChatResponse; activities: ActivityView[] };
 
 /** The last turns the API accepts, with the assistant turn carried as the answer text. */
 export function buildHistory(messages: readonly ChatMessage[]): ChatHistoryItem[] {

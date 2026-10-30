@@ -90,6 +90,95 @@ public class ChatServiceTests
     }
 
     [Fact]
+    public async Task AskAsync_Progress_ReportsEachRealStepOnceInOrderWithTheSourceTypesFound()
+    {
+        using var corpus = new TestCorpus()
+            .Add("setup", "# Setup\n\nRun dotnet run in the API folder.", sourceType: "confluence")
+            .Add("ticket", "# Ticket\n\nThe dotnet run command is described in the ticket.", sourceType: "jira");
+        corpus.Ingest();
+        var claude = new ScriptedClaude(rerank: ["C1", "C2"], Answer("Run dotnet run [S1].", "supported", "S1"));
+        var activities = new Activities();
+
+        await NewService(corpus, claude).AskAsync(Turn("How do I run it with dotnet?"), CancellationToken.None, activities);
+
+        var flow = activities.Flow();
+        Assert.Equal(
+        [
+            "understand_question:Running", "understand_question:Completed",
+            "search_documents:Running", "search_documents:Completed",
+            "generate_answer-1:Pending",
+            "rank_passages:Running", "rank_passages:Completed",
+            "generate_answer-1:Running", "generate_answer-1:Completed",
+            "verify_citations-1:Running", "verify_citations-1:Completed"
+        ], flow);
+        Assert.Equal(flow.Count, flow.Distinct().Count());
+        var search = activities.Items.Single(a => a.Step == ChatSteps.Search && a.Status == ActivityStatus.Completed);
+        Assert.Equal(["confluence", "jira"], search.Detail!.Sources!.Select(s => s.SourceType).Order());
+        Assert.Equal(1, activities.Items.Single(a => a.Step == ChatSteps.Verify && a.Status == ActivityStatus.Completed).Detail!.Cited);
+    }
+
+    [Fact]
+    public async Task AskAsync_RewriteFails_ReportsAFailedStepWithFallbackAndStillAnswers()
+    {
+        using var corpus = new TestCorpus().Add("setup", "# Setup\n\nRun dotnet run.");
+        corpus.Ingest();
+        var claude = new ScriptedClaude(rerank: ["C1"], Answer("Run dotnet run [S1].", "supported", "S1")) { FailRewrite = true };
+        var activities = new Activities();
+
+        var response = await NewService(corpus, claude).AskAsync(Turn("dotnet run"), CancellationToken.None, activities);
+
+        var understand = activities.Items.Single(a => a.Step == ChatSteps.Understand && a.Status == ActivityStatus.Failed);
+        Assert.True(understand.Detail!.Fallback);
+        Assert.Equal(EvidenceStatus.Supported, response.EvidenceStatus);
+    }
+
+    [Fact]
+    public async Task AskAsync_FirstAnswerCitesAnInventedId_ReportsTheFailedCheckAndASecondAttempt()
+    {
+        using var corpus = new TestCorpus().Add("setup", "# Setup\n\nRun dotnet run.");
+        corpus.Ingest();
+        var claude = new ScriptedClaude(rerank: ["C1"], Answer("Run it [S7].", "supported", "S7"), Answer("Run it [S1].", "supported", "S1"));
+        var activities = new Activities();
+
+        await NewService(corpus, claude).AskAsync(Turn("dotnet run"), CancellationToken.None, activities);
+
+        var flow = activities.Flow();
+        Assert.Contains("verify_citations-1:Failed", flow);
+        Assert.Contains("generate_answer-2:Running", flow);
+        Assert.Contains("verify_citations-2:Completed", flow);
+        Assert.DoesNotContain("generate_answer-2:Pending", flow);
+    }
+
+    [Fact]
+    public async Task AskAsync_NothingFound_SkipsTheRankingStepButStillWritesTheAnswer()
+    {
+        using var corpus = new TestCorpus().Add("setup", "# Setup\n\nBananas only.");
+        corpus.Ingest();
+        var claude = new ScriptedClaude(rerank: [], Answer("La documentación no lo cubre.", "insufficient"));
+        var activities = new Activities();
+
+        await NewService(corpus, claude).AskAsync(Turn("zzzz"), CancellationToken.None, activities);
+
+        Assert.DoesNotContain(activities.Items, a => a.Step == ChatSteps.Rank);
+        var search = activities.Items.Single(a => a.Step == ChatSteps.Search && a.Status == ActivityStatus.Completed);
+        Assert.Equal(0, search.Detail!.Candidates);
+        Assert.Contains("generate_answer-1:Completed", activities.Flow());
+    }
+
+    [Fact]
+    public async Task AskAsync_AnswerCallFails_ReportsTheFailedStepAndThrows()
+    {
+        using var corpus = new TestCorpus().Add("setup", "# Setup\n\nRun dotnet run.");
+        corpus.Ingest();
+        var claude = new ScriptedClaude(rerank: ["C1"]) { FailAnswer = true };
+        var activities = new Activities();
+
+        await Assert.ThrowsAsync<LlmException>(() => NewService(corpus, claude).AskAsync(Turn("dotnet run"), CancellationToken.None, activities));
+
+        Assert.Contains("generate_answer-1:Failed", activities.Flow());
+    }
+
+    [Fact]
     public void MergeTurns_LeadingAssistantAndRepeatedRoles_StartsWithUserAndAlternates()
     {
         var merged = ChatService.MergeTurns([
@@ -117,6 +206,17 @@ public class ChatServiceTests
             claims = sourceIds.Length == 0 ? [] : new[] { new { text, sourceIds } }
         });
 
+    /// <summary>Collects reported activities synchronously, in order (unlike Progress&lt;T&gt;, which posts them).</summary>
+    private sealed class Activities : IProgress<ChatActivity>
+    {
+        public List<ChatActivity> Items { get; } = [];
+
+        public void Report(ChatActivity value) => Items.Add(value);
+
+        /// <summary>"id:Status" per event, in the order they arrived.</summary>
+        public List<string> Flow() => Items.Select(a => $"{a.Id}:{a.Status}").ToList();
+    }
+
     /// <summary>Echoes the question as the rewrite, returns a fixed rerank and the scripted answers in order.</summary>
     private sealed class ScriptedClaude(string[] rerank, params string[] answers) : IClaudeClient
     {
@@ -125,6 +225,7 @@ public class ChatServiceTests
         public ModelInfo Models { get; } = new("test", "local", "answer", "aux", "none");
 
         public bool FailRewrite { get; init; }
+        public bool FailAnswer { get; init; }
         public List<string> AnswerPrompts { get; } = [];
         public List<string> AnswerSystems { get; } = [];
 
@@ -142,6 +243,11 @@ public class ChatServiceTests
 
         private string Record(ClaudeStructuredCall call)
         {
+            if (FailAnswer)
+            {
+                throw new LlmException("down");
+            }
+
             AnswerPrompts.Add(call.Messages[^1].Text);
             AnswerSystems.Add(call.System);
             return answers[_answer++];

@@ -97,6 +97,45 @@ public sealed record ChatResponse(
     IReadOnlyList<ChatClaim> Claims,
     ChatDiagnostics Diagnostics);
 
+// ---------- Chat activity (what the agent is doing while it answers) ----------
+
+public enum ActivityStatus
+{
+    /// <summary>Known to come next, not started.</summary>
+    Pending,
+    Running,
+    Completed,
+    Failed
+}
+
+/// <summary>How many indexed documents and passages of one source type (confluence, jira, repo, manual...) a step used.</summary>
+public sealed record SourceTypeCount(string SourceType, int Documents, int Passages);
+
+/// <summary>Numbers behind a step. Only the fields that apply are set. No prompts, queries or passage text.</summary>
+public sealed record ActivityDetail(
+    int? Candidates = null,
+    int? Kept = null,
+    int? Attempt = null,
+    int? Cited = null,
+    bool? Fallback = null,
+    IReadOnlyList<SourceTypeCount>? Sources = null);
+
+/// <summary>
+/// One step of the chat pipeline. The same <see cref="Id"/> is sent again as its status changes (pending, running, then
+/// completed or failed), so a client keeps one row per id. <see cref="Message"/> is English; clients may localize from
+/// <see cref="Step"/>.
+/// </summary>
+public sealed record ChatActivity(
+    string Id,
+    string Step,
+    ActivityStatus Status,
+    string Message,
+    DateTimeOffset Timestamp,
+    ActivityDetail? Detail = null);
+
+/// <summary>Terminal failure of a stream that had already started, so it cannot use an HTTP status.</summary>
+public sealed record ChatStreamError(int Status, string Title, string? Detail);
+
 // ---------- Catalog ----------
 
 public sealed record ProjectSummary(string ProjectId, string Name, string Description, string? RepoUrl, string SnapshotDate);
@@ -105,6 +144,24 @@ public sealed record InitiativeSummary(string InitiativeId, string Name);
 
 /// <param name="Depth">"full" when the corpus covers the team in depth, "overview" when only the team overview exists.</param>
 public sealed record DomainSummary(string DomainId, string Name, string Depth, IReadOnlyList<InitiativeSummary> Initiatives);
+
+// ---------- Knowledge (what is indexed for a project) ----------
+
+public sealed record SourceTypeSummary(string SourceType, int Documents, int Passages);
+
+/// <summary>A Git repository the indexed repo documents come from, taken from their pinned GitHub URLs.</summary>
+public sealed record RepositorySummary(string Name, string Url, int Documents, string? Version);
+
+/// <summary>Counts of what the index really holds for a project. Nothing here is configured by hand.</summary>
+public sealed record KnowledgeSummary(
+    string ProjectId,
+    int Documents,
+    int Passages,
+    string? LastIndexedAt,
+    IReadOnlyList<SourceTypeSummary> SourceTypes,
+    IReadOnlyList<RepositorySummary> Repositories,
+    int Teams,
+    int Initiatives);
 
 // ---------- Onboarding ----------
 

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
-import { ChatRequest, ChatResponse } from './models';
+import { Subject, concat, of, throwError } from 'rxjs';
+import { ChatActivity, ChatRequest, ChatResponse, ChatStreamEvent } from './models';
 import { MockOnboardingApi } from './mock-onboarding-api';
 import { ONBOARDING_API } from './onboarding-api';
 import { SessionStore } from './session-store';
@@ -24,10 +24,57 @@ describe('SessionStore', () => {
     await store.init();
   });
 
+  const reply = (text: string) => of<ChatStreamEvent>({ type: 'response', response: answer(text) });
+  const activity = (id: string, status: ChatActivity['status'], second: number): ChatStreamEvent => ({
+    type: 'activity',
+    activity: { id, step: id, status, message: id, timestamp: `2026-10-29T15:30:0${second}Z` },
+  });
+
+  it('ask_StreamWithActivities_KeepsThemWithTheAnswerAndClearsTheLiveFeed', async () => {
+    spyOn(api, 'chatStream').and.returnValue(of(
+      activity('search_documents', 'running', 1),
+      activity('search_documents', 'completed', 3),
+      { type: 'response', response: answer('Done') } as ChatStreamEvent,
+    ));
+
+    await store.ask('A question');
+
+    const last = store.messages()[1];
+    expect(last.kind === 'assistant' && last.activities.map((a) => a.status)).toEqual(['completed']);
+    expect(store.activities()).toEqual([]);
+  });
+
+  it('ask_StreamFailsAfterSomeSteps_KeepsTheFeedWithTheUnfinishedStepFailedAndShowsTheError', async () => {
+    spyOn(api, 'chatStream').and.returnValue(concat(of(activity('search_documents', 'running', 1)), throwError(() => new HttpErrorResponse({ status: 502 }))));
+
+    await store.ask('A question');
+
+    expect(store.activities().map((a) => a.status)).toEqual(['failed']);
+    expect(store.chatError()?.retryable).toBeTrue();
+    expect(store.asking()).toBeFalse();
+  });
+
+  it('newConversation_WhileAnswerInFlight_CancelsItAndIgnoresWhatArrivesLater', async () => {
+    const stream = new Subject<ChatStreamEvent>();
+    spyOn(api, 'chatStream').and.returnValue(stream);
+    const pending = store.ask('A question');
+    stream.next(activity('search_documents', 'running', 1));
+    expect(store.activities().length).toBe(1);
+
+    store.newConversation();
+    stream.next({ type: 'response', response: answer('Too late') });
+    await pending;
+
+    expect(stream.observed).toBeFalse();
+    expect(store.messages()).toEqual([]);
+    expect(store.activities()).toEqual([]);
+    expect(store.asking()).toBeFalse();
+  });
+
   it('retry_AfterModelFailure_DoesNotDuplicateTheQuestion', async () => {
-    spyOn(api, 'chat').and.returnValues(
+    spyOn(api, 'chatStream').and.returnValues(
       throwError(() => new HttpErrorResponse({ status: 502 })),
-      of(answer('Second try')),
+      reply('Second try'),
     );
 
     await store.ask('What changes?');
@@ -40,9 +87,9 @@ describe('SessionStore', () => {
   });
 
   it('ask_SecondQuestion_SendsThePreviousTurnsAsHistory', async () => {
-    spyOn(api, 'chat').and.callFake((request) => {
+    spyOn(api, 'chatStream').and.callFake((request) => {
       sent.push(request);
-      return of(answer('First answer'));
+      return reply('First answer');
     });
 
     await store.ask('First question');
@@ -58,7 +105,7 @@ describe('SessionStore', () => {
 
   it('setLanguage_ToEnglish_ReloadsTheRouteInEnglishKeepsTheConversationAndAsksForEnglish', async () => {
     const onboarding = spyOn(api, 'onboarding').and.callThrough();
-    const chat = spyOn(api, 'chat').and.returnValue(of(answer('Hello')));
+    const chat = spyOn(api, 'chatStream').and.returnValue(reply('Hello'));
     await store.setLanguage('es');
     await store.ask('Una pregunta');
 
@@ -101,8 +148,20 @@ describe('SessionStore', () => {
     expect(store.initiatives().every((i) => i.domainId === 'rhaegal')).toBeTrue();
   });
 
+  it('newConversation_AfterQuestions_ClearsTheChatAndKeepsTheSelection', async () => {
+    spyOn(api, 'chatStream').and.returnValue(reply('Hello'));
+    await store.selectDomain('silverwing');
+    await store.ask('A question');
+
+    store.newConversation();
+
+    expect(store.messages()).toEqual([]);
+    expect(store.chatError()).toBeNull();
+    expect(store.domain()).toBe('silverwing');
+  });
+
   it('selectRole_AfterAConversation_StartsANewConversation', async () => {
-    spyOn(api, 'chat').and.returnValue(of(answer('Hello')));
+    spyOn(api, 'chatStream').and.returnValue(reply('Hello'));
     await store.ask('First question');
 
     await store.selectRole('qa');

@@ -56,6 +56,39 @@ export interface ChatResponse {
   diagnostics: ChatDiagnostics;
 }
 
+/** One step of the agent while it answers (mirrors ChatActivity in Contracts.cs). The same id arrives again as its status changes. */
+export type ActivityStatus = 'pending' | 'running' | 'completed' | 'failed';
+
+export interface SourceTypeCount {
+  sourceType: string;
+  documents: number;
+  passages: number;
+}
+
+export interface ActivityDetail {
+  candidates?: number;
+  kept?: number;
+  attempt?: number;
+  cited?: number;
+  fallback?: boolean;
+  sources?: SourceTypeCount[];
+}
+
+export interface ChatActivity {
+  id: string;
+  step: string;
+  status: ActivityStatus;
+  /** English text from the server; the UI localizes from `step` and `status`. */
+  message: string;
+  timestamp: string;
+  detail?: ActivityDetail;
+}
+
+/** What the chat stream delivers: any number of activities, then the answer. A failure ends the stream as an error. */
+export type ChatStreamEvent =
+  | { type: 'activity'; activity: ChatActivity }
+  | { type: 'response'; response: ChatResponse };
+
 export interface ProjectSummary {
   projectId: string;
   name: string;
@@ -67,6 +100,31 @@ export interface ProjectSummary {
 export interface InitiativeSummary {
   initiativeId: string;
   name: string;
+}
+
+/** What the index holds for a project (mirrors KnowledgeSummary in Contracts.cs). */
+export interface SourceTypeSummary {
+  sourceType: string;
+  documents: number;
+  passages: number;
+}
+
+export interface RepositorySummary {
+  name: string;
+  url: string;
+  documents: number;
+  version: string | null;
+}
+
+export interface KnowledgeSummary {
+  projectId: string;
+  documents: number;
+  passages: number;
+  lastIndexedAt: string | null;
+  sourceTypes: SourceTypeSummary[];
+  repositories: RepositorySummary[];
+  teams: number;
+  initiatives: number;
 }
 
 export interface DomainSummary {

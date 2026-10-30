@@ -4,6 +4,7 @@ import { ChatResponse } from './models';
 const reply = (answer: string): ChatMessage => ({
   kind: 'assistant',
   response: { answer } as ChatResponse,
+  activities: [],
 });
 
 describe('buildHistory', () => {

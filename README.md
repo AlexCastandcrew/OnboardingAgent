@@ -401,6 +401,8 @@ Service account keys (`Bearer`) are not supported.
 | GET | `/api/projects/{projectId}/domains?language=` | Teams with their initiatives and depth (`full` or `overview`). With `language=en` an initiative uses its `nameEn` when it has one. |
 | GET | `/api/onboarding/{projectId}/{role}?domain=&initiative=&language=` | The four steps, with documents, links and suggested questions. With `language=en` each step uses its `en` texts, field by field, and falls back to Spanish. |
 | POST | `/api/chat` | The plan's contract plus `language`, `answerId`, `claims` and `diagnostics`. `language` is `es` or `en`; the answer is written in that language whatever language the question or the sources use. Without it the answer follows the question's language. |
+| GET | `/api/projects/{projectId}/knowledge` | What the index holds for the project: documents, passages, documents per source type, repositories (derived from the GitHub URLs of `repo` documents), teams, initiatives and the last indexing date. Feeds the "Your project at a glance" card. |
+| POST | `/api/chat/stream` | Same request and same pipeline as `/api/chat`, answered as Server-Sent Events: `activity` events (the real steps, see below), then `response` (the same body as `/api/chat`) or `error`. See [Activity stream](#activity-stream). |
 | GET | `/api/documents/{documentId}` | The document's text, metadata and sections, for the local evidence view. |
 | POST | `/api/feedback` | Useful or not useful for an `answerId` (P1). |
 | GET | `/api/gaps` | Questions answered with `insufficient` evidence (P1). |
@@ -436,6 +438,38 @@ for each user (the token's subject), or for each IP without a user. Over the lim
    evaluation covers those.
 7. `sources` contains only the cited passages. An `insufficient` answer stores the question (not the conversation)
    in `.data/gaps.jsonl`.
+
+## Activity stream
+
+`POST /api/chat/stream` shows what the agent is really doing while it answers. `ChatService.AskAsync` takes an optional
+`IProgress<ChatActivity>` and reports at each real point of the pipeline; the endpoint turns those reports into SSE
+(`text/event-stream`). Nothing is simulated and there are no timers: an event is sent when the step happens.
+
+Events (`event:` name, then `data:` JSON, camelCase):
+
+| Event | Data |
+|---|---|
+| `activity` | `{ id, step, status, message, timestamp, detail }`. The same `id` arrives again as the status changes: `pending` → `running` → `completed` or `failed`. `message` is English; the UI localizes from `step` and `status`. |
+| `response` | The `/api/chat` body (`answerId`, `answer`, `evidenceStatus`, `sources`, `claims`, `diagnostics`). Always the last event of a good stream. |
+| `error` | `{ status, title, detail }` (502 model failure, 504 timeout). Replaces `response`; never an "insufficient" answer. |
+
+Steps, in the order they really happen (`step` → ids): `understand_question` (query rewrite), `search_documents` (BM25 search
+of the indexed corpus; `detail.sources` lists documents and passages per source type: `confluence`, `jira`, `repo`, `manual`,
+`synthetic`), `rank_passages` (rerank; skipped when nothing was found), `generate_answer-N` and `verify_citations-N` (N is the
+attempt: a second attempt appears only after an invalid citation). `generate_answer-1` is announced as `pending` as soon as the
+search ends, because it always follows. A rewrite or rerank that fails is reported as `failed` with `detail.fallback`, and the
+pipeline continues with the fallback (the raw question, the search order).
+
+`detail` carries numbers only (`candidates`, `kept`, `attempt`, `cited`, `fallback`, `sources`): never prompts, queries,
+passage text or model ids.
+
+Before the stream starts, validation (400), authentication (401) and the rate limit (429) answer as normal HTTP responses. After
+it starts the HTTP status is 200 and a failure is the `error` event. Closing the connection (a new conversation, another
+selection, a closed tab) cancels the work on the server.
+
+What it does **not** show: the chat never queries Confluence, Azure DevOps, Jira or a repository live. Those contents are in the
+index (Confluence is copied into the corpus when it is ingested or synced). The feed therefore reports which kinds of source
+the passages came from, not live connections to those systems.
 
 ## Languages (Spanish and English)
 

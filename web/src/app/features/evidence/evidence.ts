@@ -2,10 +2,11 @@ import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { I18n } from '../../core/i18n';
 import { SessionStore } from '../../core/session-store';
+import { SourceBadgeComponent } from '../../shared/source-badge';
 
 @Component({
   selector: 'app-evidence',
-  imports: [DatePipe],
+  imports: [DatePipe, SourceBadgeComponent],
   template: `
     @if (store.evidence(); as evidence) {
       <aside class="evidence" [attr.aria-label]="i18n.t('evidence.label')">
@@ -15,11 +16,14 @@ import { SessionStore } from '../../core/session-store';
         </header>
 
         <div class="evidence-body">
-        <p class="muted">
-          {{ evidence.source.sourceType }} · {{ i18n.t('evidence.section') }} «{{ evidence.source.section }}»
-          @if (evidence.source.sourceVersion) {
-            · {{ i18n.t('evidence.version') }} {{ evidence.source.sourceVersion }}
-          }
+        <p class="muted evidence-meta">
+          <app-source-badge [type]="evidence.source.sourceType" />
+          <span>
+            {{ i18n.t('evidence.section') }} «{{ evidence.source.section }}»
+            @if (evidence.source.sourceVersion) {
+              · {{ i18n.t('evidence.version') }} {{ evidence.source.sourceVersion }}
+            }
+          </span>
         </p>
 
         <h3>{{ i18n.t('evidence.excerpt') }}</h3>
