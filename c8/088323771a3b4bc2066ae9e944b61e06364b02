@@ -1,0 +1,39 @@
+web/src/app/app.html
+  s_26c07fb7d7f7bd::t_de4c0963f01f90 1-5,7-14,16-18,20-25,28-37,39-65,67-69,71-73,76-96
+web/src/app/app.ts
+  s_9efe163d5970d7::t_4448ce8415825b 2,8,15,18-21,28-37
+web/src/app/core/i18n.ts
+  s_9efe163d5970d7::t_207c9d2a5a8886 154-160,350-356
+web/src/app/features/chat/chat.ts
+  s_9efe163d5970d7::t_ba93daf2c84661 28,41,54
+web/src/styles.css
+  s_9efe163d5970d7::t_1bbb16822eaf52 91-215,349,368
+web/src/app/core/demo-auth.ts
+  s_26c07fb7d7f7bd::t_0c8cc10593cefe 1-33
+web/src/app/features/login/login.ts
+  s_26c07fb7d7f7bd::t_7107fa804bff3f 1-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c8088323771a3b4bc2066ae9e944b61e06364b02",
+  "prompts": {},
+  "sessions": {
+    "s_26c07fb7d7f7bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a127520d-4bc4-4913-8218-1d62201d2a80",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "AlexCastandcrew <alexander.rendon@castandcrew.com>"
+    },
+    "s_9efe163d5970d7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d4186181-5503-40b3-93c9-f51dd891313f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "AlexCastandcrew <alexander.rendon@castandcrew.com>"
+    }
+  }
+}
