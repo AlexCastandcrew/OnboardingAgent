@@ -1,54 +1,85 @@
-<header class="topbar">
-  <button type="button" class="menu-button" [attr.aria-label]="i18n.t('app.openMenu')" [attr.aria-expanded]="drawerOpen()" (click)="drawerOpen.set(true)">
-    <app-icon name="menu" />
-  </button>
+@if (signedIn()) {
+  <header class="topbar">
+    <button type="button" class="menu-button" [attr.aria-label]="i18n.t('app.openMenu')" [attr.aria-expanded]="drawerOpen()" (click)="drawerOpen.set(true)">
+      <app-icon name="menu" />
+    </button>
 
-  <div class="brand" role="img" aria-label="Moltres Agent, powered by Cast &amp; Crew">
-    <span class="brand-name">Moltres Agent</span>
-    <svg class="brand-cross" viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="9" y="1" width="6" height="22" />
-      <rect x="1" y="9" width="22" height="6" />
-    </svg>
-    <span class="brand-powered">Powered by <strong>Cast &amp; Crew</strong></span>
-  </div>
+    <div class="brand" role="img" aria-label="Moltres Agent, powered by Cast &amp; Crew">
+      <span class="brand-name">Moltres Agent</span>
+      <svg class="brand-cross" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="9" y="1" width="6" height="22" />
+        <rect x="1" y="9" width="22" height="6" />
+      </svg>
+      <span class="brand-powered">Powered by <strong>Cast &amp; Crew</strong></span>
+    </div>
 
-  <div class="product">
-    <strong>AI Team Onboarding</strong>
-    <span>{{ i18n.t('app.tagline') }}</span>
-  </div>
+    <div class="product">
+      <strong>AI Team Onboarding</strong>
+      <span>{{ i18n.t('app.tagline') }}</span>
+    </div>
 
-  <div class="language" role="group" [attr.aria-label]="i18n.t('lang.label')">
-    @for (option of languages; track option.id) {
-      <button
-        type="button"
-        class="lang-button"
-        [class.active]="i18n.language() === option.id"
-        [attr.aria-pressed]="i18n.language() === option.id"
-        (click)="store.setLanguage(option.id)">{{ option.label }}</button>
-    }
-  </div>
-</header>
+    <div class="language" role="group" [attr.aria-label]="i18n.t('lang.label')">
+      @for (option of languages; track option.id) {
+        <button
+          type="button"
+          class="lang-button"
+          [class.active]="i18n.language() === option.id"
+          [attr.aria-pressed]="i18n.language() === option.id"
+          (click)="store.setLanguage(option.id)">{{ option.label }}</button>
+      }
+    </div>
 
-@if (store.healthWarning()) {
-  <p class="banner-error" role="alert">{{ i18n.t('app.healthWarning') }}</p>
-}
+    <div class="user" (click)="$event.stopPropagation()">
+      @if (signedIn()) {
+        <button
+          type="button"
+          class="user-button"
+          [attr.aria-label]="user.name"
+          [attr.aria-expanded]="userMenuOpen()"
+          aria-haspopup="true"
+          (click)="userMenuOpen.set(!userMenuOpen())">{{ user.initials }}</button>
+        @if (userMenuOpen()) {
+          <div class="user-menu" role="dialog" [attr.aria-label]="user.name">
+            <div class="user-menu-head">
+              <span>{{ user.company }}</span>
+              <button type="button" class="user-signout" (click)="signOut()">{{ i18n.t('user.signOut') }}</button>
+            </div>
+            <div class="user-menu-body">
+              <span class="user-avatar" aria-hidden="true">{{ user.initials }}</span>
+              <div>
+                <strong>{{ user.name }}</strong>
+                <p>{{ user.email }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </header>
 
-<div class="layout">
-  @if (drawerOpen()) {
-    <div class="backdrop" (click)="drawerOpen.set(false)"></div>
+  @if (store.healthWarning()) {
+    <p class="banner-error" role="alert">{{ i18n.t('app.healthWarning') }}</p>
   }
 
-  <aside class="sidebar" [class.open]="drawerOpen()" [attr.aria-label]="i18n.t('sel.heading')">
-    <button type="button" class="drawer-close" [attr.aria-label]="i18n.t('app.closeMenu')" (click)="drawerOpen.set(false)">
-      <app-icon name="x" />
-    </button>
-    <app-selection />
-    <app-route />
-  </aside>
+  <div class="layout">
+    @if (drawerOpen()) {
+      <div class="backdrop" (click)="drawerOpen.set(false)"></div>
+    }
 
-  <main class="main">
-    <app-chat />
-  </main>
-</div>
+    <aside class="sidebar" [class.open]="drawerOpen()" [attr.aria-label]="i18n.t('sel.heading')">
+      <button type="button" class="drawer-close" [attr.aria-label]="i18n.t('app.closeMenu')" (click)="drawerOpen.set(false)">
+        <app-icon name="x" />
+      </button>
+      <app-selection />
+      <app-route />
+    </aside>
 
-<app-evidence />
+    <main class="main">
+      <app-chat />
+    </main>
+  </div>
+
+  <app-evidence />
+} @else {
+  <app-login />
+}
